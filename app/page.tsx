@@ -3,90 +3,120 @@ import Image from "next/image"
 export default function HomePage() {
 
   const metrics = [
-    ["1048", "remote examinations"],
-    ["6", "connected centers"],
-    ["2018–2025", "network activity"],
-    ["EEG · EMG · SEP · MEP", "integrated modalities"],
+    ["1048", "REMOTE EXAMINATIONS"],
+    ["6", "CONNECTED CENTERS"],
+    ["2018–2025", "NETWORK ACTIVITY"],
   ]
 
-  const nodes = [
-    { name: "Veruno", top: "18%", left: "56%" },
-    { name: "Milano", top: "30%", left: "46%" },
-    { name: "Pavia", top: "42%", left: "50%" },
-    { name: "Montescano", top: "54%", left: "52%" },
-    { name: "Telese", top: "74%", left: "58%" },
-    { name: "Bari", top: "84%", left: "74%" },
+  const modalities = [
+    ["🧠", "EEG"],
+    ["〰️", "EMG"],
+    ["🦴", "SEP"],
+    ["🧠", "MEP"],
   ]
 
   return (
-    <main className="bg-[#F5F7F8] text-[#1F2F35] overflow-x-hidden">
+    <main className="min-h-screen bg-[#F5F7F8] overflow-x-hidden">
 
       {/* HERO */}
-      <section className="relative min-h-screen flex items-center px-8 py-20 overflow-hidden bg-[#F5F7F8]">
+      <section className="relative min-h-screen overflow-hidden px-8 py-12">
 
-        {/* soft atmosphere */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(111,169,184,0.10),transparent_35%)]" />
+        {/* background */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(111,169,184,0.12),transparent_40%)]" />
 
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(55,112,130,0.06),transparent_40%)]" />
+        {/* neural bg */}
+        <div className="absolute right-[-10%] top-[10%] w-[900px] h-[900px] opacity-[0.12]">
 
-        {/* subtle grid */}
-        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(31,47,53,0.4)_1px,transparent_1px),linear-gradient(90deg,rgba(31,47,53,0.4)_1px,transparent_1px)] bg-[size:60px_60px]" />
+          <svg
+            viewBox="0 0 800 800"
+            className="w-full h-full"
+          >
 
-        <div className="relative z-10 max-w-7xl mx-auto w-full">
+            <g stroke="#377082" strokeWidth="1" fill="none">
 
-          {/* top bar */}
-          <div className="flex items-center justify-between mb-24">
+              <path d="M400 120 C480 180 540 260 560 340" />
+              <path d="M400 120 C330 180 280 260 260 340" />
+              <path d="M400 120 C420 220 430 320 420 420" />
+              <path d="M560 340 C640 360 700 420 740 500" />
+              <path d="M260 340 C180 360 120 420 80 500" />
 
-            <div className="flex items-center gap-5">
+              {[...Array(40)].map((_, i) => (
+                <circle
+                  key={i}
+                  cx={Math.random() * 800}
+                  cy={Math.random() * 800}
+                  r="2"
+                  fill="#377082"
+                />
+              ))}
 
-              <Image
-                src="/maugeri-logo.png"
-                alt="Maugeri"
-                width={180}
-                height={60}
-                priority
-              />
+            </g>
 
-            </div>
+          </svg>
 
-            <div className="uppercase tracking-[0.3em] text-xs text-[#7A8E95]">
-              Tele-Neurophysiology Network
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto">
+
+          {/* top */}
+          <div className="flex items-center justify-between">
+
+            <Image
+              src="/maugeri-logo.png"
+              alt="Maugeri"
+              width={220}
+              height={80}
+              priority
+            />
+
+            <div className="uppercase tracking-[0.35em] text-xs text-[#377082]">
+              TELE-NEUROPHYSIOLOGY NETWORK
             </div>
 
           </div>
 
-          {/* title */}
-          <div className="max-w-5xl">
+          {/* hero content */}
+          <div className="mt-24 grid lg:grid-cols-2 gap-12 items-center">
 
-            <h1 className="text-[4rem] md:text-[7rem] leading-[0.92] font-semibold tracking-[-0.04em] text-[#1F2F35]">
+            {/* LEFT */}
+            <div>
 
-              A digital multicenter
-              rehabilitation infrastructure.
+              <h1 className="text-[4rem] md:text-[6.8rem] leading-[0.9] tracking-[-0.06em] font-serif text-[#1F2F35]">
 
-            </h1>
+                A digital
+                multicenter
+                rehabilitation
+                infrastructure.
 
-            <p className="mt-10 text-xl md:text-2xl leading-relaxed text-[#7A8E95] max-w-3xl">
+              </h1>
 
-              Interactive congress experience for the multicenter
-              tele-neurophysiology workflow developed within
-              ICS Maugeri IRCCS.
+              <p className="mt-10 text-xl leading-relaxed text-[#7A8E95] max-w-xl">
 
-            </p>
+                Interactive congress experience for the multicenter
+                tele-neurophysiology workflow developed within
+                ICS Maugeri IRCCS.
+
+              </p>
+
+            </div>
+
+            {/* RIGHT */}
+            <div className="relative h-[600px]" />
 
           </div>
 
           {/* metrics */}
-          <div className="mt-24 grid md:grid-cols-4 gap-10 border-t border-[#D9E5E8] pt-10">
+          <div className="mt-24 border-t border-[#D9E5E8] pt-10 grid lg:grid-cols-4 gap-10">
 
             {metrics.map(([value, label]) => (
 
               <div key={label}>
 
-                <div className="text-4xl md:text-5xl font-semibold tracking-[-0.04em] text-[#377082]">
+                <div className="text-[3.5rem] leading-none tracking-[-0.05em] text-[#377082] font-serif">
                   {value}
                 </div>
 
-                <div className="mt-3 uppercase tracking-[0.2em] text-xs text-[#7A8E95] leading-relaxed">
+                <div className="mt-3 text-xs tracking-[0.2em] text-[#7A8E95] uppercase">
                   {label}
                 </div>
 
@@ -94,76 +124,27 @@ export default function HomePage() {
 
             ))}
 
-          </div>
+            {/* modalities */}
+            <div>
 
-        </div>
-
-      </section>
-
-      {/* NETWORK SECTION */}
-      <section className="relative min-h-screen flex items-center px-8 py-24 bg-[#FFFFFF] overflow-hidden">
-
-        {/* subtle background */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(111,169,184,0.08),transparent_60%)]" />
-
-        <div className="relative z-10 max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-24 items-center">
-
-          {/* LEFT */}
-          <div>
-
-            <div className="uppercase tracking-[0.3em] text-xs text-[#377082] mb-8">
-              Distributed Infrastructure
-            </div>
-
-            <h2 className="text-[3.5rem] md:text-[5rem] leading-[0.95] font-semibold tracking-[-0.05em] text-[#1F2F35]">
-
-              A multicenter
-              tele-neurophysiology
-              network.
-
-            </h2>
-
-            <p className="mt-10 text-xl leading-relaxed text-[#7A8E95] max-w-xl">
-
-              Remote review, centralized reporting and digital archiving
-              across multiple rehabilitation centers in Italy.
-
-            </p>
-
-            {/* timeline */}
-            <div className="mt-20">
-
-              <div className="flex justify-between text-sm text-[#7A8E95] mb-5">
-                <span>2018</span>
-                <span>2025</span>
+              <div className="text-xs tracking-[0.2em] text-[#7A8E95] uppercase mb-5">
+                Integrated Modalities
               </div>
 
-              <div className="relative h-[2px] bg-[#D9E5E8] overflow-visible">
+              <div className="flex gap-8">
 
-                <div className="absolute inset-y-0 left-0 w-[92%] bg-[#377082]" />
-
-                <div className="absolute right-[8%] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#377082]" />
-
-              </div>
-
-              <div className="mt-10 grid grid-cols-3 gap-6">
-
-                {[
-                  ["2018", "Network activation"],
-                  ["2021", "Workflow scale-up"],
-                  ["2025", "1048 examinations"],
-                ].map(([year, label]) => (
+                {modalities.map(([icon, label]) => (
 
                   <div
-                    key={year}
-                    className="border-t border-[#D9E5E8] pt-4"
+                    key={label}
+                    className="flex flex-col items-center"
                   >
 
-                    <div className="text-2xl font-semibold text-[#377082]">
-                      {year}
+                    <div className="text-3xl text-[#377082]">
+                      {icon}
                     </div>
 
-                    <div className="mt-2 text-sm leading-relaxed text-[#7A8E95]">
+                    <div className="mt-2 text-sm text-[#377082]">
                       {label}
                     </div>
 
@@ -174,45 +155,6 @@ export default function HomePage() {
               </div>
 
             </div>
-
-          </div>
-
-          {/* RIGHT */}
-          <div className="relative aspect-square rounded-[3rem] border border-[#D9E5E8] bg-[#F5F7F8] overflow-hidden">
-
-            {/* Italy silhouette */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-[0.05]">
-
-              <div className="text-[24rem] leading-none">
-                🇮🇹
-              </div>
-
-            </div>
-
-            {/* grid */}
-            <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(rgba(31,47,53,0.4)_1px,transparent_1px),linear-gradient(90deg,rgba(31,47,53,0.4)_1px,transparent_1px)] bg-[size:50px_50px]" />
-
-            {/* nodes */}
-            {nodes.map((node) => (
-
-              <div
-                key={node.name}
-                className="absolute"
-                style={{
-                  top: node.top,
-                  left: node.left,
-                }}
-              >
-
-                <div className="w-4 h-4 rounded-full bg-[#377082]" />
-
-                <div className="mt-3 text-sm text-[#2C5D6B] whitespace-nowrap">
-                  {node.name}
-                </div>
-
-              </div>
-
-            ))}
 
           </div>
 
