@@ -28,7 +28,7 @@ export default function NetworkSection() {
               </p>
 
               <p className="mt-6 max-w-xl text-[10px] uppercase leading-loose tracking-[0.16em] text-[#7A8E95] md:mt-8 md:text-[12px] md:tracking-[0.2em]">
-                Montescano / Pavia / Milano / Bari / Telese / Veruno
+                Veruno / Milano / Pavia / Montescano / Telese / Bari
               </p>
 
               <div className="mt-10 grid grid-cols-2 gap-y-8 md:mt-16">

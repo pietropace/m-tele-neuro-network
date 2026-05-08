@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import Container from "../ui/Container";
@@ -10,14 +10,14 @@ import SectionLabel from "../ui/SectionLabel";
 const years = ["2020", "2021", "2022", "2023", "2024", "2025"] as const;
 
 const sites = [
-  { key: "nervi", label: "Nervi", color: "#1F2F35", x: 39, y: 33 },
-  { key: "tradate", label: "Tradate", color: "#2C5D6B", x: 44, y: 26 },
-  { key: "sciacca", label: "Sciacca", color: "#7A8E95", x: 54, y: 88 },
-  { key: "veruno", label: "Veruno", color: "#6FA9B8", x: 45, y: 20 },
-  { key: "bari", label: "Bari", color: "#377082", x: 66, y: 70 },
-  { key: "montescano", label: "Montescano", color: "#4A8FA3", x: 43, y: 31 },
-  { key: "pavia", label: "Pavia", color: "#D9E5E8", x: 43, y: 29 },
-  { key: "torino", label: "Torino", color: "#A9BBC0", x: 34, y: 27 },
+  { key: "nervi", label: "Nervi", color: "#1F2F35", x: 27, y: 37 },
+  { key: "tradate", label: "Tradate", color: "#2C5D6B", x: 31.5, y: 21.5 },
+  { key: "sciacca", label: "Sciacca", color: "#7A8E95", x: 39, y: 89.5 },
+  { key: "veruno", label: "Veruno", color: "#6FA9B8", x: 30.5, y: 23.5 },
+  { key: "bari", label: "Bari", color: "#377082", x: 61, y: 64.5 },
+  { key: "montescano", label: "Montescano", color: "#4A8FA3", x: 33, y: 30.5 },
+  { key: "pavia", label: "Pavia", color: "#D9E5E8", x: 32.5, y: 28.5 },
+  { key: "torino", label: "Torino", color: "#A9BBC0", x: 22.5, y: 25 },
 ] as const;
 
 type Year = (typeof years)[number];
@@ -105,7 +105,67 @@ export default function ActivityExplorerSection() {
   )[0];
   const peakSiteQuarter = [...siteSeries].sort((a, b) => b.value - a.value)[0];
   const activeInstitutes = yearSiteTotals.filter((site) => site.value > 0).length;
-  const maxSiteValue = Math.max(...siteSeries.map((row) => row.value), 1);
+
+  const yearTotals = useMemo(
+    () =>
+      years.map((year) => ({
+        year,
+        value: rows
+          .filter((row) => row.year === year)
+          .reduce((sum, row) => sum + rowTotal(row), 0),
+      })),
+    [],
+  );
+
+  const maxYearTotal = Math.max(...yearTotals.map((item) => item.value), 1);
+
+  const siteTrendByYear = useMemo(
+    () =>
+      years.map((year) => ({
+        year,
+        value: rows
+          .filter((row) => row.year === year)
+          .reduce((sum, row) => sum + row[activeSite], 0),
+      })),
+    [activeSite],
+  );
+
+  const maxSiteTrendValue = Math.max(...siteTrendByYear.map((item) => item.value), 1);
+
+  const yearSiteRanking = useMemo(
+    () =>
+      sites
+        .map((site) => ({
+          ...site,
+          value: yearlyRows.reduce((sum, row) => sum + row[site.key], 0),
+        }))
+        .sort((a, b) => b.value - a.value),
+    [yearlyRows],
+  );
+
+  const maxYearSiteValue = Math.max(...yearSiteRanking.map((item) => item.value), 1);
+
+  const peakYearTotal = [...yearTotals].sort((a, b) => b.value - a.value)[0];
+
+  const trendPoints = siteTrendByYear.map((point, index) => ({
+    ...point,
+    index,
+    x: (index / (siteTrendByYear.length - 1)) * 100,
+    y: 100 - (point.value / maxSiteTrendValue) * 78,
+  }));
+
+  const siteTrendPeak = trendPoints.reduce(
+    (peak, point) => (point.value > peak.value ? point : peak),
+    trendPoints[0],
+  );
+
+  const trendPolylinePoints = siteTrendByYear
+    .map((point, index) => {
+      const x = (index / (siteTrendByYear.length - 1)) * 100;
+      const y = 100 - (point.value / maxSiteTrendValue) * 78;
+      return `${x},${y}`;
+    })
+    .join(" ");
 
   return (
     <section className="relative overflow-hidden bg-[#F5F7F8] py-16 md:py-32 lg:py-44">
@@ -140,7 +200,8 @@ export default function ActivityExplorerSection() {
                       key={value}
                       type="button"
                       onClick={() => setMode(value as ViewMode)}
-                      className={`px-4 py-3 text-[10px] uppercase tracking-[0.2em] transition-colors md:px-5 ${
+                      aria-pressed={mode === value}
+                      className={`px-4 py-3 text-[11px] uppercase tracking-[0.18em] transition-colors md:px-5 md:text-[10px] md:tracking-[0.2em] ${
                         mode === value
                           ? "bg-[#1F2F35] text-white"
                           : "bg-[#F5F7F8] text-[#7A8E95]"
@@ -151,7 +212,7 @@ export default function ActivityExplorerSection() {
                   ))}
                 </div>
 
-                <div className="mt-6 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="mt-6 flex snap-x gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {(mode === "year" ? years : sites).map((item) => {
                     const key = typeof item === "string" ? item : item.key;
                     const label = typeof item === "string" ? item : item.label;
@@ -167,7 +228,8 @@ export default function ActivityExplorerSection() {
                             ? setActiveYear(key as Year)
                             : setActiveSite(key as SiteKey)
                         }
-                        className={`shrink-0 border px-3 py-2 text-[10px] uppercase tracking-[0.18em] transition-colors ${
+                        aria-pressed={active}
+                        className={`min-h-9 shrink-0 snap-start border px-3 py-2 text-[11px] uppercase tracking-[0.14em] transition-colors md:text-[10px] md:tracking-[0.18em] ${
                           active
                             ? "border-[#2C5D6B] bg-white text-[#1F2F35]"
                             : "border-[#1F2F35]/10 text-[#7A8E95]"
@@ -190,7 +252,8 @@ export default function ActivityExplorerSection() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.55 }}
-                    className="mt-3 font-serif text-[4rem] leading-none text-[#1F2F35] md:text-[5rem]"
+                    aria-live="polite"
+                    className="mt-3 font-serif text-[3.25rem] leading-none text-[#1F2F35] md:text-[5rem]"
                   >
                     {formatNumber(selectedTotal)}
                   </motion.p>
@@ -222,7 +285,7 @@ export default function ActivityExplorerSection() {
                 alt=""
                 fill
                 sizes="(min-width: 1024px) 40vw, 100vw"
-                className="object-contain px-3 py-8 opacity-[0.045] saturate-0"
+                className="object-contain opacity-[0.045] saturate-0"
               />
               <div className="absolute inset-x-0 top-0 flex items-center justify-between px-5 py-5 md:px-8">
                 <span className="text-[10px] uppercase tracking-[0.22em] text-[#7A8E95]">
@@ -253,6 +316,7 @@ export default function ActivityExplorerSection() {
                         setMode("site");
                         setActiveSite(site.key);
                       }}
+                      aria-pressed={isSelected}
                       initial={{ scale: 0, opacity: 0 }}
                       whileInView={{ scale: 1, opacity }}
                       animate={{ scale: isSelected ? 1.18 : 1, opacity }}
@@ -264,7 +328,7 @@ export default function ActivityExplorerSection() {
                       }}
                       className="absolute -translate-x-1/2 -translate-y-1/2 text-left"
                       style={{ left: `${site.x}%`, top: `${site.y}%` }}
-                      aria-label={`View ${site.label}`}
+                      aria-label={`View ${site.label} (${formatNumber(site.value)} exams)`}
                     >
                       <span
                         className="block rounded-full border border-white/80 shadow-[0_14px_34px_rgba(31,47,53,0.12)]"
@@ -314,117 +378,273 @@ export default function ActivityExplorerSection() {
           </FadeIn>
 
           <FadeIn delay={0.22} className="lg:col-span-7">
-            <AnimatePresence mode="wait">
+            <LayoutGroup id="activity-explorer-panels">
+            <AnimatePresence mode="wait" initial={false}>
               {mode === "year" ? (
                 <motion.div
                   key={`year-${activeYear}`}
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  initial={{ opacity: 0, y: 24, scale: 0.985 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -18, scale: 0.99 }}
+                  transition={{ duration: 0.56, ease: [0.22, 1, 0.36, 1] }}
                   className="space-y-5"
                 >
-                  {yearlyRows.map((row, rowIndex) => {
-                    const total = rowTotal(row);
-
-                    return (
-                      <div
-                        key={row.label}
-                        className="grid gap-3 border-b border-[#1F2F35]/10 pb-5 md:grid-cols-[9rem_1fr_4rem] md:items-center"
-                      >
-                        <div>
-                          <p className="font-serif text-[1.9rem] leading-none text-[#1F2F35]">
-                            {row.quarter}
-                          </p>
-                          <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-[#7A8E95]">
-                            trimestre
-                          </p>
-                        </div>
-
-                        <div className="relative h-12 overflow-hidden bg-white">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${(total / maxQuarterTotal) * 100}%` }}
-                            transition={{
-                              duration: 0.95,
-                              delay: rowIndex * 0.07,
-                              ease: [0.22, 1, 0.36, 1],
-                            }}
-                            className="flex h-full"
+                  <motion.div
+                    layout
+                    layoutId="activity-top-panel"
+                    className="rounded-sm border-y border-[#1F2F35]/10 bg-white/45 p-4 md:p-5"
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-[#7A8E95]">
+                      Timeline 2020-2025
+                    </p>
+                    <div className="mt-4 space-y-2">
+                      {yearTotals.map((item, index) => {
+                        const isActive = item.year === activeYear;
+                        return (
+                          <button
+                            key={item.year}
+                            type="button"
+                            onClick={() => setActiveYear(item.year)}
+                            aria-pressed={isActive}
+                            className={`grid w-full grid-cols-[3.1rem_1fr_2.4rem] items-center gap-3 rounded-sm px-2 py-2 text-left transition-colors ${
+                              isActive ? "bg-[#1F2F35] text-white" : "text-[#1F2F35]"
+                            }`}
                           >
-                            {sites.map((site) => {
-                              const value = row[site.key];
-                              if (!value) return null;
+                            <span className="font-serif text-xl leading-none md:text-2xl">
+                              {item.year}
+                            </span>
+                            <span className={`relative h-2 overflow-hidden ${isActive ? "bg-white/15" : "bg-white"}`}>
+                              <motion.span
+                                initial={{ width: 0 }}
+                                animate={{ width: `${(item.value / maxYearTotal) * 100}%` }}
+                                transition={{ duration: 0.8, delay: index * 0.04 }}
+                                className={`absolute inset-y-0 left-0 ${isActive ? "bg-white" : "bg-[#2C5D6B]"}`}
+                              />
+                            </span>
+                            <span className="relative text-right text-sm leading-none md:text-base">
+                              {Math.round(item.value / 10) / 10}
+                              {item.year === peakYearTotal.year && (
+                                <motion.span
+                                  initial={{ opacity: 0, y: 4 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.45, delay: 0.2 }}
+                                  className={`absolute -right-1 -top-5 whitespace-nowrap text-[8px] uppercase tracking-[0.18em] ${
+                                    isActive ? "text-white/80" : "text-[#2C5D6B]"
+                                  }`}
+                                >
+                                  peak
+                                </motion.span>
+                              )}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
 
-                              return (
-                                <motion.div
-                                  key={site.key}
-                                  title={`${site.label}: ${value}`}
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  transition={{ duration: 0.45 }}
-                                  style={{
-                                    width: `${(value / total) * 100}%`,
-                                    backgroundColor: site.color,
-                                  }}
-                                />
-                              );
-                            })}
-                          </motion.div>
-                        </div>
-
-                        <p className="font-serif text-[2.35rem] leading-none text-[#1F2F35] md:text-right">
-                          {total}
-                        </p>
-                      </div>
-                    );
-                  })}
+                  <motion.div
+                    layout
+                    layoutId="activity-bottom-panel"
+                    className="rounded-sm border-y border-[#1F2F35]/10 bg-white/45 p-4 md:p-5"
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-[#7A8E95]">
+                      Quarter breakdown {activeYear}
+                    </p>
+                    <div className="mt-4 space-y-3">
+                      {yearlyRows.map((row, rowIndex) => {
+                        const total = rowTotal(row);
+                        return (
+                          <div
+                            key={row.label}
+                            className="grid grid-cols-[3.2rem_1fr_2.2rem] items-center gap-3"
+                          >
+                            <p className="font-serif text-[1.2rem] leading-none text-[#1F2F35] md:text-[1.45rem]">
+                              {row.quarter}
+                            </p>
+                            <div className="relative h-8 overflow-hidden bg-white md:h-9">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${(total / maxQuarterTotal) * 100}%` }}
+                                transition={{
+                                  duration: 0.8,
+                                  delay: rowIndex * 0.06,
+                                  ease: [0.22, 1, 0.36, 1],
+                                }}
+                                className="flex h-full"
+                              >
+                                {sites.map((site) => {
+                                  const value = row[site.key];
+                                  if (!value) return null;
+                                  return (
+                                    <span
+                                      key={site.key}
+                                      title={`${site.label}: ${value}`}
+                                      style={{
+                                        width: `${(value / total) * 100}%`,
+                                        backgroundColor: site.color,
+                                      }}
+                                    />
+                                  );
+                                })}
+                              </motion.div>
+                            </div>
+                            <p className="text-right font-serif text-[1.15rem] leading-none text-[#1F2F35] md:text-[1.35rem]">
+                              {total}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
                 </motion.div>
               ) : (
                 <motion.div
                   key={`site-${activeSite}`}
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  className="space-y-3"
+                  initial={{ opacity: 0, y: 24, scale: 0.985 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -18, scale: 0.99 }}
+                  transition={{ duration: 0.56, ease: [0.22, 1, 0.36, 1] }}
+                  className="space-y-5"
                 >
-                  {siteSeries.map((row, rowIndex) => (
-                    <div
-                      key={`${activeSite}-${row.label}`}
-                      className="grid grid-cols-[4.4rem_1fr_2.5rem] items-center gap-3 border-b border-[#1F2F35]/10 pb-3 md:grid-cols-[7rem_1fr_3rem]"
-                    >
+                  <motion.div
+                    layout
+                    layoutId="activity-top-panel"
+                    className="rounded-sm border-y border-[#1F2F35]/10 bg-white/45 p-4 md:p-5"
+                  >
+                    <div className="flex items-end justify-between gap-6">
                       <div>
-                        <p className="font-serif text-[1.35rem] leading-none text-[#1F2F35] md:text-[1.7rem]">
-                          {row.quarter}
+                        <p className="text-[10px] uppercase tracking-[0.2em] text-[#7A8E95]">
+                          City trend
                         </p>
-                        <p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-[#7A8E95]">
-                          {row.year}
+                        <p className="mt-2 font-serif text-[2rem] leading-none text-[#1F2F35] md:text-[2.6rem]">
+                          {selectedSite.label}
                         </p>
                       </div>
-
-                      <div className="h-[7px] bg-white">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${(row.value / maxSiteValue) * 100}%` }}
-                          transition={{
-                            duration: 0.75,
-                            delay: rowIndex * 0.018,
-                            ease: [0.22, 1, 0.36, 1],
-                          }}
-                          className="h-full"
-                          style={{ backgroundColor: selectedSite.color }}
-                        />
-                      </div>
-
-                      <p className="font-serif text-xl leading-none text-[#1F2F35] md:text-right md:text-2xl">
-                        {row.value}
+                      <p className="font-serif text-[2.2rem] leading-none text-[#1F2F35] md:text-[2.8rem]">
+                        {formatNumber(siteTotal)}
                       </p>
                     </div>
-                  ))}
+
+                    <div className="relative mt-4">
+                      <svg viewBox="0 0 100 100" className="h-24 w-full md:h-28" aria-hidden="true">
+                        <polyline
+                          points="0,100 100,100"
+                          fill="none"
+                          stroke="#D9E5E8"
+                          strokeWidth="1"
+                          vectorEffect="non-scaling-stroke"
+                        />
+                        <motion.polyline
+                          points={trendPolylinePoints}
+                          fill="none"
+                          stroke={selectedSite.color}
+                          strokeWidth="2"
+                          vectorEffect="non-scaling-stroke"
+                          initial={{ pathLength: 0, opacity: 0 }}
+                          animate={{ pathLength: 1, opacity: 1 }}
+                          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                        />
+                        {trendPoints.map((point, index) => {
+                          return (
+                            <motion.circle
+                              key={point.year}
+                              cx={point.x}
+                              cy={point.y}
+                              r="1.5"
+                              fill={selectedSite.color}
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ duration: 0.38, delay: 0.2 + index * 0.06 }}
+                            />
+                          );
+                        })}
+                      </svg>
+                      <motion.div
+                        key={`${activeSite}-trend-peak`}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.45, delay: 0.35 }}
+                        className="pointer-events-none absolute"
+                        style={{
+                          left: `${siteTrendPeak.x}%`,
+                          top: `${siteTrendPeak.y}%`,
+                          transform: "translate(-50%, -130%)",
+                        }}
+                      >
+                        <span className="inline-block whitespace-nowrap bg-[#1F2F35] px-2 py-1 text-[8px] uppercase tracking-[0.16em] text-white">
+                          Peak {siteTrendPeak.year.slice(2)} · {formatNumber(siteTrendPeak.value)}
+                        </span>
+                      </motion.div>
+                      <div className="mt-2 grid grid-cols-6 text-[9px] uppercase tracking-[0.14em] text-[#7A8E95]">
+                        {siteTrendByYear.map((point) => (
+                          <span key={point.year} className="text-center">
+                            {point.year.slice(2)}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    layout
+                    layoutId="activity-bottom-panel"
+                    className="rounded-sm border-y border-[#1F2F35]/10 bg-white/45 p-4 md:p-5"
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-[#7A8E95]">
+                      City view {activeYear}
+                    </p>
+                    <motion.div
+                      initial="hidden"
+                      animate="show"
+                      variants={{
+                        hidden: { opacity: 0 },
+                        show: {
+                          opacity: 1,
+                          transition: { staggerChildren: 0.055, delayChildren: 0.08 },
+                        },
+                      }}
+                      className="mt-4 space-y-2"
+                    >
+                      {yearSiteRanking.map((site, index) => {
+                        const active = site.key === activeSite;
+                        return (
+                          <motion.button
+                            key={site.key}
+                            type="button"
+                            onClick={() => setActiveSite(site.key)}
+                            variants={{
+                              hidden: { opacity: 0, y: 12 },
+                              show: { opacity: 1, y: 0 },
+                            }}
+                            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                            className={`grid w-full grid-cols-[6.2rem_1fr_2.4rem] items-center gap-3 rounded-sm px-2 py-2 text-left transition-colors ${
+                              active ? "bg-[#1F2F35] text-white" : "text-[#1F2F35]"
+                            }`}
+                            aria-pressed={active}
+                          >
+                            <span className="text-[11px] uppercase tracking-[0.14em] md:text-[10px] md:tracking-[0.16em]">
+                              {site.label}
+                            </span>
+                            <span className={`relative h-2 overflow-hidden ${active ? "bg-white/15" : "bg-white"}`}>
+                              <motion.span
+                                initial={{ width: 0 }}
+                                animate={{ width: `${(site.value / maxYearSiteValue) * 100}%` }}
+                                transition={{ duration: 0.8, delay: index * 0.04 }}
+                                className={`absolute inset-y-0 left-0 ${active ? "bg-white" : "bg-[#2C5D6B]"}`}
+                              />
+                            </span>
+                            <span className="text-right font-serif text-[1.15rem] leading-none md:text-[1.25rem]">
+                              {site.value}
+                            </span>
+                          </motion.button>
+                        );
+                      })}
+                    </motion.div>
+                  </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>
+            </LayoutGroup>
           </FadeIn>
         </div>
 
@@ -438,6 +658,7 @@ export default function ActivityExplorerSection() {
                   setMode("site");
                   setActiveSite(site.key);
                 }}
+                aria-pressed={mode === "site" && activeSite === site.key}
                 className="flex items-center gap-3 text-left"
               >
                 <span

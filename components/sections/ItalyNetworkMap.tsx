@@ -1,65 +1,71 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 
 type MapNode = {
+  id: string;
   name: string;
   x: number;
   y: number;
-  labelX: number;
-  labelY: number;
-  anchor: "start" | "end";
+  labelDesktopX: number;
+  labelDesktopY: number;
+  anchorDesktop: "start" | "end";
 };
 
 const nodes: MapNode[] = [
   {
+    id: "02",
     name: "Milano",
-    x: 314,
-    y: 174,
-    labelX: -18,
-    labelY: -18,
-    anchor: "end",
+    x: 272,
+    y: 178,
+    labelDesktopX: 56,
+    labelDesktopY: 17,
+    anchorDesktop: "start",
   },
   {
+    id: "01",
     name: "Veruno",
-    x: 264,
-    y: 158,
-    labelX: 22,
-    labelY: -18,
-    anchor: "start",
+    x: 323,
+    y: 206,
+    labelDesktopX: -22,
+    labelDesktopY: -32,
+    anchorDesktop: "end",
   },
   {
+    id: "03",
     name: "Pavia",
-    x: 300,
-    y: 197,
-    labelX: -18,
-    labelY: 22,
-    anchor: "end",
+    x: 306,
+    y: 226,
+    labelDesktopX: -17,
+    labelDesktopY: 7,
+    anchorDesktop: "end",
   },
   {
+    id: "04",
     name: "Montescano",
-    x: 307,
-    y: 209,
-    labelX: 22,
-    labelY: 22,
-    anchor: "start",
+    x: 320,
+    y: 245,
+    labelDesktopX: 22,
+    labelDesktopY: 24,
+    anchorDesktop: "start",
   },
   {
+    id: "05",
     name: "Telese",
     x: 607,
-    y: 507,
-    labelX: -18,
-    labelY: 8,
-    anchor: "end",
+    y: 520,
+    labelDesktopX: -22,
+    labelDesktopY: 10,
+    anchorDesktop: "end",
   },
   {
+    id: "06",
     name: "Bari",
-    x: 753,
-    y: 517,
-    labelX: 24,
-    labelY: 8,
-    anchor: "start",
+    x: 746,
+    y: 522,
+    labelDesktopX: 24,
+    labelDesktopY: 8,
+    anchorDesktop: "start",
   },
 ];
 
@@ -67,39 +73,30 @@ const hub = nodes.find((node) => node.name === "Pavia") ?? nodes[0];
 
 export default function ItalyNetworkMap() {
   return (
-    <div className="mx-auto w-full max-w-[720px]">
+    <div className="mx-auto w-full max-w-[620px]">
       <div className="relative aspect-square w-full">
-        <motion.div
-          initial={{
-            opacity: 0,
-          }}
-          whileInView={{
-            opacity: 0.16,
-          }}
-          viewport={{
-            once: true,
-            margin: "-12%",
-          }}
-          transition={{
-            duration: 1.8,
-          }}
-          className="absolute inset-0"
-        >
-          <Image
-            src="/it.svg"
-            alt="Italy"
-            fill
-            sizes="(min-width: 1024px) 50vw, 92vw"
-            className="object-contain saturate-0"
-          />
-        </motion.div>
-
         <svg
           viewBox="0 0 1000 1000"
           className="absolute inset-0 h-full w-full"
           aria-label="ICS Maugeri tele-neurophysiology sites in Italy"
           role="img"
         >
+          <motion.g
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 0.17 }}
+            viewport={{ once: true, margin: "-12%" }}
+            transition={{ duration: 1.6 }}
+          >
+            <image
+              href="/it.svg"
+              x="0"
+              y="0"
+              width="1000"
+              height="1000"
+              preserveAspectRatio="xMidYMid meet"
+            />
+          </motion.g>
+
           {nodes
             .filter((node) => node.name !== hub.name)
             .map((node, index) => (
@@ -110,7 +107,7 @@ export default function ItalyNetworkMap() {
                 x2={node.x}
                 y2={node.y}
                 stroke="#2C5D6B"
-                strokeOpacity="0.1"
+                strokeOpacity="0.12"
                 strokeWidth="1"
                 vectorEffect="non-scaling-stroke"
                 initial={{
@@ -169,9 +166,9 @@ export default function ItalyNetworkMap() {
               />
 
               <text
-                x={node.x + node.labelX}
-                y={node.y + node.labelY}
-                textAnchor={node.anchor}
+                x={node.x + node.labelDesktopX}
+                y={node.y + node.labelDesktopY}
+                textAnchor={node.anchorDesktop}
                 className="hidden md:block"
                 fontSize="17"
                 fill="#4F5E64"
@@ -179,6 +176,27 @@ export default function ItalyNetworkMap() {
               >
                 {node.name}
               </text>
+
+              <g className="md:hidden" transform={`translate(${node.x - 9}, ${node.y - 9})`}>
+                <rect
+                  width="18"
+                  height="18"
+                  rx="9"
+                  fill="#2C5D6B"
+                  fillOpacity="0.95"
+                />
+                <text
+                  x="9"
+                  y="12"
+                  textAnchor="middle"
+                  fontSize="8"
+                  fontWeight="600"
+                  fill="#F5F7F8"
+                  letterSpacing="0.02em"
+                >
+                  {node.id}
+                </text>
+              </g>
             </motion.g>
           ))}
         </svg>
@@ -187,8 +205,11 @@ export default function ItalyNetworkMap() {
         {nodes.map((node) => (
           <div
             key={node.name}
-            className="text-[10px] uppercase leading-relaxed tracking-[0.18em] text-[#7A8E95]"
+            className="flex items-center gap-2 text-[11px] uppercase leading-relaxed tracking-[0.16em] text-[#7A8E95]"
           >
+            <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#2C5D6B] text-[8px] font-semibold tracking-normal text-[#F5F7F8]">
+              {node.id}
+            </span>
             {node.name}
           </div>
         ))}
