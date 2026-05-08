@@ -1,9 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
+import ActivityExplorerSection from "./ActivityExplorerSection";
 import Container from "../ui/Container";
 import FadeIn from "../ui/FadeIn";
 import SectionLabel from "../ui/SectionLabel";
+import SignalEvidenceSection from "./SignalEvidenceSection";
 
 const workflow = [
   {
@@ -78,7 +80,7 @@ function WorkflowIcon({ path }: { path: string }) {
   return (
     <svg
       viewBox="0 0 64 64"
-      className="h-12 w-12 text-[#2C5D6B]"
+      className="h-10 w-10 text-[#2C5D6B] md:h-12 md:w-12"
       aria-hidden="true"
     >
       <path
@@ -95,7 +97,7 @@ function WorkflowIcon({ path }: { path: string }) {
 
 function Waveform({ path, delay }: { path: string; delay: number }) {
   return (
-    <svg viewBox="0 0 180 110" className="h-32 w-full" aria-hidden="true">
+    <svg viewBox="0 0 180 110" className="h-24 w-full md:h-32" aria-hidden="true">
       <path
         d="M0 56H180"
         stroke="#D9E5E8"
@@ -134,24 +136,24 @@ function Waveform({ path, delay }: { path: string; delay: number }) {
 export default function CongressSections() {
   return (
     <>
-      <section className="bg-[#F5F7F8] py-24 md:py-32 lg:py-44">
+      <section className="bg-[#F5F7F8] py-16 md:py-32 lg:py-44">
         <Container>
-          <div className="grid gap-16 lg:grid-cols-12 lg:gap-10">
+          <div className="grid gap-10 md:gap-16 lg:grid-cols-12 lg:gap-10">
             <FadeIn className="lg:col-span-5">
               <SectionLabel>Clinical Need</SectionLabel>
-              <h2 className="max-w-4xl font-serif text-[3.05rem] leading-[0.94] tracking-normal text-[#1F2F35] sm:text-[3.6rem] md:text-[5.6rem] lg:text-[6.8rem]">
+              <h2 className="max-w-4xl font-serif text-[2.55rem] leading-[0.98] tracking-normal text-[#1F2F35] min-[380px]:text-[2.85rem] sm:text-[3.6rem] md:text-[5.6rem] lg:text-[6.8rem]">
                 Timely neurophysiology is crucial in rehabilitation settings.
               </h2>
             </FadeIn>
 
             <div className="lg:col-span-5 lg:col-start-8 lg:pt-32">
               <FadeIn delay={0.12}>
-                <p className="border-t border-[#1F2F35]/10 pt-8 text-[19px] font-light leading-[1.8] text-[#4F5E64] md:text-[23px]">
+                <p className="border-t border-[#1F2F35]/10 pt-6 text-[18px] font-light leading-[1.72] text-[#4F5E64] md:pt-8 md:text-[23px] md:leading-[1.8]">
                   Access to EEG, EMG and evoked potentials can shape diagnostic
                   and prognostic decisions during rehabilitation, where timing
                   often determines the value of specialist interpretation.
                 </p>
-                <p className="mt-8 text-base leading-[1.9] text-[#4F5E64] md:text-lg">
+                <p className="mt-6 text-base leading-[1.82] text-[#4F5E64] md:mt-8 md:text-lg md:leading-[1.9]">
                   In Italy, clinical neurophysiology remains concentrated
                   within neurology-based training. A structured tele-reporting
                   model helps distribute expertise without diluting specialist
@@ -163,12 +165,12 @@ export default function CongressSections() {
         </Container>
       </section>
 
-      <section className="bg-white py-24 md:py-32 lg:py-44">
+      <section className="bg-white py-16 md:py-32 lg:py-44">
         <Container>
-          <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
+          <div className="grid gap-10 md:gap-14 lg:grid-cols-12 lg:gap-10">
             <FadeIn className="lg:col-span-4">
               <SectionLabel>Workflow Infrastructure</SectionLabel>
-              <h2 className="font-serif text-[3rem] leading-[0.96] text-[#1F2F35] md:text-[5rem]">
+              <h2 className="font-serif text-[2.55rem] leading-[0.98] text-[#1F2F35] min-[380px]:text-[2.85rem] md:text-[5rem]">
                 A shared digital spine for distributed reporting.
               </h2>
             </FadeIn>
@@ -179,14 +181,14 @@ export default function CongressSections() {
                   <FadeIn
                     key={item.title}
                     delay={index * 0.06}
-                    className="grid gap-6 border-b border-[#1F2F35]/10 py-8 last:border-b-0 md:grid-cols-[5rem_1fr] md:gap-8"
+                    className="grid gap-5 border-b border-[#1F2F35]/10 py-6 last:border-b-0 md:grid-cols-[5rem_1fr] md:gap-8 md:py-8"
                   >
                     <WorkflowIcon path={item.icon} />
                     <div>
-                      <h3 className="font-serif text-[2rem] leading-none text-[#1F2F35] md:text-[2.6rem]">
+                      <h3 className="font-serif text-[1.9rem] leading-none text-[#1F2F35] md:text-[2.6rem]">
                         {item.title}
                       </h3>
-                      <p className="mt-4 max-w-2xl text-base leading-[1.85] text-[#4F5E64] md:text-lg">
+                      <p className="mt-3 max-w-2xl text-base leading-[1.75] text-[#4F5E64] md:mt-4 md:text-lg md:leading-[1.85]">
                         {item.text}
                       </p>
                     </div>
@@ -198,15 +200,15 @@ export default function CongressSections() {
         </Container>
       </section>
 
-      <section className="bg-[#F5F7F8] py-24 md:py-32 lg:py-44">
+      <section className="bg-[#F5F7F8] py-16 md:py-32 lg:py-44">
         <Container>
           <FadeIn>
             <SectionLabel>Examinations</SectionLabel>
             <div className="max-w-5xl">
-              <h2 className="font-serif text-[3rem] leading-[0.96] text-[#1F2F35] md:text-[5.8rem]">
+              <h2 className="font-serif text-[2.55rem] leading-[0.98] text-[#1F2F35] min-[380px]:text-[2.85rem] md:text-[5.8rem]">
                 Four workflows, one reporting architecture.
               </h2>
-              <p className="mt-8 max-w-2xl text-lg font-light leading-[1.85] text-[#4F5E64] md:text-[22px]">
+              <p className="mt-6 max-w-2xl text-[17px] font-light leading-[1.75] text-[#4F5E64] md:mt-8 md:text-[22px] md:leading-[1.85]">
                 EEG, ENG/EMG, somatosensory evoked potentials and motor evoked
                 potentials are translated into a common digital reporting
                 environment.
@@ -214,12 +216,12 @@ export default function CongressSections() {
             </div>
           </FadeIn>
 
-          <div className="mt-16 grid gap-px overflow-hidden border-y border-[#1F2F35]/10 bg-[#1F2F35]/10 md:grid-cols-2 lg:mt-24 lg:grid-cols-4">
+          <div className="mt-10 grid gap-px overflow-hidden border-y border-[#1F2F35]/10 bg-[#1F2F35]/10 md:mt-16 md:grid-cols-2 lg:mt-24 lg:grid-cols-4">
             {examinations.map((exam, index) => (
               <FadeIn
                 key={exam.label}
                 delay={index * 0.08}
-                className="bg-[#F5F7F8] p-6 md:p-8 lg:p-10"
+                className="bg-[#F5F7F8] p-5 md:p-8 lg:p-10"
               >
                 <div className="flex items-baseline justify-between gap-6">
                   <span className="text-[12px] uppercase tracking-[0.24em] text-[#377082]">
@@ -239,25 +241,27 @@ export default function CongressSections() {
         </Container>
       </section>
 
-      <section className="relative overflow-hidden bg-white py-24 md:py-36 lg:py-48">
+      <SignalEvidenceSection />
+
+      <section className="relative overflow-hidden bg-white py-16 md:py-36 lg:py-48">
         <Container>
-          <div className="grid gap-16 lg:grid-cols-12 lg:gap-10">
+          <div className="grid gap-10 md:gap-16 lg:grid-cols-12 lg:gap-10">
             <FadeIn className="lg:col-span-7">
               <SectionLabel>Results</SectionLabel>
-              <p className="font-serif text-[6rem] leading-[0.78] text-[#1F2F35] sm:text-[7rem] md:text-[13rem] lg:text-[17rem]">
+              <p className="font-serif text-[5.25rem] leading-[0.82] text-[#1F2F35] min-[380px]:text-[6rem] sm:text-[7rem] md:text-[13rem] lg:text-[17rem]">
                 1,048
               </p>
-              <h2 className="mt-8 max-w-3xl font-serif text-[2.75rem] leading-[1] text-[#1F2F35] md:text-[5rem]">
+              <h2 className="mt-6 max-w-3xl font-serif text-[2.35rem] leading-[1.02] text-[#1F2F35] min-[380px]:text-[2.65rem] md:mt-8 md:text-[5rem]">
                 examinations managed remotely through the network.
               </h2>
             </FadeIn>
 
             <div className="lg:col-span-4 lg:col-start-9 lg:self-end">
               <FadeIn delay={0.16}>
-                <div className="border-y border-[#1F2F35]/10 py-8">
+                <div className="border-y border-[#1F2F35]/10 py-6 md:py-8">
                   <div className="grid grid-cols-2 gap-8">
                     <div>
-                      <p className="font-serif text-[4rem] leading-none text-[#1F2F35]">
+                      <p className="font-serif text-[3.4rem] leading-none text-[#1F2F35] md:text-[4rem]">
                         8
                       </p>
                       <p className="mt-3 text-[11px] uppercase leading-relaxed tracking-[0.22em] text-[#7A8E95]">
@@ -265,7 +269,7 @@ export default function CongressSections() {
                       </p>
                     </div>
                     <div>
-                      <p className="font-serif text-[4rem] leading-none text-[#1F2F35]">
+                      <p className="font-serif text-[3.4rem] leading-none text-[#1F2F35] md:text-[4rem]">
                         6
                       </p>
                       <p className="mt-3 text-[11px] uppercase leading-relaxed tracking-[0.22em] text-[#7A8E95]">
@@ -273,7 +277,7 @@ export default function CongressSections() {
                       </p>
                     </div>
                   </div>
-                  <p className="mt-10 text-base leading-[1.9] text-[#4F5E64] md:text-lg">
+                  <p className="mt-8 text-base leading-[1.8] text-[#4F5E64] md:mt-10 md:text-lg md:leading-[1.9]">
                     The network supported continuity of diagnostic activity,
                     flexible workload redistribution and multicenter specialist
                     collaboration.
@@ -283,8 +287,8 @@ export default function CongressSections() {
             </div>
           </div>
 
-          <FadeIn delay={0.22} className="mt-20 lg:mt-28">
-            <div className="relative h-20 border-y border-[#D9E5E8] md:h-28">
+          <FadeIn delay={0.22} className="mt-12 md:mt-20 lg:mt-28">
+            <div className="relative h-16 border-y border-[#D9E5E8] md:h-28">
               <div className="absolute left-0 top-1/2 h-px w-full bg-[#D9E5E8]" />
               <motion.div
                 className="absolute left-0 top-1/2 h-px bg-[#2C5D6B]"
@@ -316,30 +320,32 @@ export default function CongressSections() {
         </Container>
       </section>
 
-      <section className="bg-[#F5F7F8] py-24 md:py-32 lg:py-44">
+      <ActivityExplorerSection />
+
+      <section className="bg-[#F5F7F8] py-16 md:py-32 lg:py-44">
         <Container>
           <FadeIn>
             <SectionLabel>Timeline</SectionLabel>
-            <h2 className="max-w-5xl font-serif text-[3rem] leading-[0.96] text-[#1F2F35] md:text-[6rem]">
+            <h2 className="max-w-5xl font-serif text-[2.5rem] leading-[0.99] text-[#1F2F35] min-[380px]:text-[2.8rem] md:text-[6rem]">
               2018-2025: from foundation to consolidated multicenter activity.
             </h2>
           </FadeIn>
 
-          <div className="relative mt-16 border-l border-[#1F2F35]/10 pl-8 md:mt-24 md:pl-12 lg:ml-[33%]">
+          <div className="relative mt-12 border-l border-[#1F2F35]/10 pl-7 md:mt-24 md:pl-12 lg:ml-[33%]">
             {timeline.map((item, index) => (
               <FadeIn
                 key={item.year}
                 delay={index * 0.08}
-                className="relative pb-16 last:pb-0 md:pb-24"
+                className="relative pb-12 last:pb-0 md:pb-24"
               >
-                <span className="absolute -left-[2.19rem] top-2 h-3 w-3 rounded-full border border-[#2C5D6B] bg-[#F5F7F8] md:-left-[3.19rem]" />
-                <p className="font-serif text-[3.6rem] leading-none text-[#1F2F35] md:text-[5rem]">
+                <span className="absolute -left-[1.98rem] top-2 h-3 w-3 rounded-full border border-[#2C5D6B] bg-[#F5F7F8] md:-left-[3.19rem]" />
+                <p className="font-serif text-[3.1rem] leading-none text-[#1F2F35] md:text-[5rem]">
                   {item.year}
                 </p>
                 <h3 className="mt-5 text-[12px] uppercase tracking-[0.24em] text-[#377082]">
                   {item.title}
                 </h3>
-                <p className="mt-5 max-w-xl text-base leading-[1.9] text-[#4F5E64] md:text-lg">
+                <p className="mt-4 max-w-xl text-base leading-[1.8] text-[#4F5E64] md:mt-5 md:text-lg md:leading-[1.9]">
                   {item.text}
                 </p>
               </FadeIn>
@@ -348,13 +354,13 @@ export default function CongressSections() {
         </Container>
       </section>
 
-      <section className="flex min-h-screen items-center bg-[#1F2F35] py-24 text-white md:py-32 lg:py-44">
+      <section className="flex min-h-[100svh] items-center bg-[#1F2F35] py-16 text-white md:py-32 lg:py-44">
         <Container>
           <FadeIn>
             <p className="text-[11px] uppercase tracking-[0.28em] text-[#6FA9B8]">
               Conclusions
             </p>
-            <h2 className="mt-10 max-w-6xl font-serif text-[2.85rem] leading-[0.94] tracking-normal text-white sm:text-[4rem] md:text-[7rem] lg:text-[9rem]">
+            <h2 className="mt-8 max-w-6xl font-serif text-[2.45rem] leading-[0.98] tracking-normal text-white min-[380px]:text-[2.75rem] sm:text-[4rem] md:mt-10 md:text-[7rem] lg:text-[9rem]">
               Standard-
               <br className="sm:hidden" />
               ization is the infrastructure of scalable
@@ -362,14 +368,14 @@ export default function CongressSections() {
             </h2>
           </FadeIn>
 
-          <div className="mt-16 grid gap-10 border-t border-white/15 pt-8 md:grid-cols-3 lg:mt-24">
+          <div className="mt-10 grid gap-7 border-t border-white/15 pt-7 md:mt-16 md:grid-cols-3 md:gap-10 md:pt-8 lg:mt-24">
             {[
               "Feasible in a multicenter rehabilitation system.",
               "Improves access to specialist neurophysiology.",
               "Requires procedures, training and clear governance.",
             ].map((item, index) => (
               <FadeIn key={item} delay={index * 0.08}>
-                <p className="text-[19px] font-light leading-[1.65] text-[#EAF3F5] md:text-[22px]">
+                <p className="text-[17px] font-light leading-[1.65] text-[#EAF3F5] md:text-[22px]">
                   {item}
                 </p>
               </FadeIn>
