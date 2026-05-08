@@ -10,14 +10,14 @@ import SectionLabel from "../ui/SectionLabel";
 const years = ["2020", "2021", "2022", "2023", "2024", "2025"] as const;
 
 const sites = [
-  { key: "nervi", label: "Nervi", color: "#1F2F35", x: 27, y: 37 },
-  { key: "tradate", label: "Tradate", color: "#2C5D6B", x: 31.5, y: 21.5 },
-  { key: "sciacca", label: "Sciacca", color: "#7A8E95", x: 39, y: 89.5 },
-  { key: "veruno", label: "Veruno", color: "#6FA9B8", x: 30.5, y: 23.5 },
-  { key: "bari", label: "Bari", color: "#377082", x: 61, y: 64.5 },
-  { key: "montescano", label: "Montescano", color: "#4A8FA3", x: 33, y: 30.5 },
-  { key: "pavia", label: "Pavia", color: "#D9E5E8", x: 32.5, y: 28.5 },
-  { key: "torino", label: "Torino", color: "#A9BBC0", x: 22.5, y: 25 },
+  { key: "nervi", label: "Nervi", color: "#1F2F35", x: 30, y: 36, labelX: 0, labelY: 13 },
+  { key: "tradate", label: "Tradate", color: "#2C5D6B", x: 35, y: 22.5, labelX: 11, labelY: 2 },
+  { key: "sciacca", label: "Sciacca", color: "#7A8E95", x: 41, y: 84, labelX: 12, labelY: 2 },
+  { key: "veruno", label: "Veruno", color: "#6FA9B8", x: 37, y: 20.5, labelX: 11, labelY: -8 },
+  { key: "bari", label: "Bari", color: "#377082", x: 67, y: 58.5, labelX: 10, labelY: 11 },
+  { key: "montescano", label: "Montescano", color: "#4A8FA3", x: 38, y: 31, labelX: 13, labelY: 8 },
+  { key: "pavia", label: "Pavia", color: "#D9E5E8", x: 36.5, y: 28.5, labelX: 10, labelY: 7 },
+  { key: "torino", label: "Torino", color: "#A9BBC0", x: 24, y: 25, labelX: 8, labelY: 9 },
 ] as const;
 
 type Year = (typeof years)[number];
@@ -212,7 +212,7 @@ export default function ActivityExplorerSection() {
                   ))}
                 </div>
 
-                <div className="mt-6 flex snap-x gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="mt-6 grid grid-cols-2 gap-2 min-[460px]:grid-cols-3 min-[640px]:grid-cols-4 md:flex md:snap-x md:overflow-x-auto md:pb-1 md:[scrollbar-width:none] md:[&::-webkit-scrollbar]:hidden">
                   {(mode === "year" ? years : sites).map((item) => {
                     const key = typeof item === "string" ? item : item.key;
                     const label = typeof item === "string" ? item : item.label;
@@ -229,7 +229,7 @@ export default function ActivityExplorerSection() {
                             : setActiveSite(key as SiteKey)
                         }
                         aria-pressed={active}
-                        className={`min-h-9 shrink-0 snap-start border px-3 py-2 text-[11px] uppercase tracking-[0.14em] transition-colors md:text-[10px] md:tracking-[0.18em] ${
+                        className={`min-h-9 w-full shrink-0 snap-start border px-2 py-2 text-center text-[9px] uppercase tracking-[0.09em] transition-colors min-[460px]:text-[10px] md:w-auto md:px-3 md:text-left md:text-[10px] md:tracking-[0.16em] ${
                           active
                             ? "border-[#2C5D6B] bg-white text-[#1F2F35]"
                             : "border-[#1F2F35]/10 text-[#7A8E95]"
@@ -280,13 +280,6 @@ export default function ActivityExplorerSection() {
         <div className="mt-10 grid gap-8 lg:mt-16 lg:grid-cols-12 lg:gap-10">
           <FadeIn delay={0.18} className="lg:col-span-5">
             <div className="relative min-h-[390px] overflow-hidden border-y border-[#1F2F35]/10 bg-white/45 py-8 md:min-h-[520px] md:py-10">
-              <Image
-                src="/it.svg"
-                alt=""
-                fill
-                sizes="(min-width: 1024px) 40vw, 100vw"
-                className="object-contain opacity-[0.045] saturate-0"
-              />
               <div className="absolute inset-x-0 top-0 flex items-center justify-between px-5 py-5 md:px-8">
                 <span className="text-[10px] uppercase tracking-[0.22em] text-[#7A8E95]">
                   Institute geography
@@ -301,7 +294,17 @@ export default function ActivityExplorerSection() {
                 </motion.span>
               </div>
 
-              <div className="absolute inset-0">
+              <div className="absolute inset-x-4 bottom-28 top-16 flex items-center justify-center md:inset-x-7 md:bottom-28 md:top-20">
+                <div className="relative aspect-[0.72/1] h-full max-h-[360px] w-full max-w-[270px] md:max-h-[410px] md:max-w-[305px]">
+                  <Image
+                    src="/it.svg"
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 24vw, 78vw"
+                    className="object-contain opacity-[0.05] saturate-0"
+                  />
+
+                  <div className="absolute inset-0">
                 {yearSiteTotals.map((site, index) => {
                   const isSelected = mode === "site" && site.key === activeSite;
                   const radius = 6 + Math.sqrt(site.value) * 1.25;
@@ -338,12 +341,22 @@ export default function ActivityExplorerSection() {
                           backgroundColor: site.color,
                         }}
                       />
-                      <span className="mt-2 hidden whitespace-nowrap text-[9px] uppercase tracking-[0.18em] text-[#1F2F35] md:block">
+                      <span
+                        className={`absolute whitespace-nowrap text-[9px] uppercase tracking-[0.12em] text-[#1F2F35] transition-opacity ${
+                          isSelected ? "opacity-100" : "opacity-0 md:opacity-100"
+                        }`}
+                        style={{
+                          left: `${site.labelX}%`,
+                          top: `${site.labelY}%`,
+                        }}
+                      >
                         {site.label}
                       </span>
                     </motion.button>
                   );
                 })}
+                  </div>
+                </div>
               </div>
 
               <div className="absolute inset-x-5 bottom-5 grid grid-cols-2 gap-5 border-t border-[#1F2F35]/10 pt-5 md:inset-x-8 md:grid-cols-3">
