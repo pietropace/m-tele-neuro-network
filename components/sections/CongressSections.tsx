@@ -133,13 +133,9 @@ function Waveform({ path, delay }: { path: string; delay: number }) {
           pathLength: 0,
           opacity: 0,
         }}
-        whileInView={{
+        animate={{
           pathLength: 1,
           opacity: 1,
-        }}
-        viewport={{
-          once: true,
-          margin: "-20%",
         }}
         transition={{
           duration: 2.4,
@@ -198,7 +194,7 @@ export default function CongressSections() {
                 {workflow.map((item, index) => (
                   <FadeIn
                     key={item.title}
-                    delay={index * 0.06}
+                    delay={0.08 + index * 0.12}
                     className="grid gap-5 border-b border-[#1F2F35]/10 py-6 last:border-b-0 md:grid-cols-[5rem_1fr] md:gap-8 md:py-8"
                   >
                     <WorkflowIcon path={item.icon} />
