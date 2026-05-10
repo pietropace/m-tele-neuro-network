@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { italyNetworkNodes, MAP_VIEWBOX_SIZE } from "./networkMapData";
 
 const nodes = italyNetworkNodes.map((node) => ({
@@ -35,7 +34,7 @@ export default function ItalyNetworkMap() {
           {nodes
             .filter((node) => node.name !== hub.name)
             .map((node, index) => (
-              <motion.line
+              <line
                 key={node.name}
                 x1={hub.x}
                 y1={hub.y}
@@ -45,34 +44,16 @@ export default function ItalyNetworkMap() {
                 strokeOpacity="0.12"
                 strokeWidth="1"
                 vectorEffect="non-scaling-stroke"
-                initial={{
-                  pathLength: 0,
-                  opacity: 0,
-                }}
-                animate={{
-                  pathLength: 1,
-                  opacity: 1,
-                }}
-                transition={{
-                  duration: 1.4,
-                  delay: index * 0.06,
-                }}
+                className="italy-map-appear"
+                style={{ animationDelay: `${index * 60}ms` }}
               />
             ))}
 
           {nodes.map((node, index) => (
-            <motion.g
+            <g
               key={node.name}
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 1,
-              }}
-              transition={{
-                duration: 0.7,
-                delay: 0.2 + index * 0.05,
-              }}
+              className="italy-map-appear"
+              style={{ animationDelay: `${200 + index * 50}ms` }}
             >
               <circle
                 cx={node.x}
@@ -124,7 +105,7 @@ export default function ItalyNetworkMap() {
                   {node.id}
                 </text>
               </g>
-            </motion.g>
+            </g>
           ))}
         </svg>
       </div>
