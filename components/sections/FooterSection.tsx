@@ -44,12 +44,12 @@ export default function FooterSection() {
         };
 
         if (!ignore) {
-          setLikes(data.stats?.likes ?? 126);
+          setLikes(data.stats?.likes ?? 0);
           setContactsCount(data.stats?.contacts ?? 0);
         }
       } catch {
         if (!ignore) {
-          setLikes(126);
+          setLikes(0);
           setContactsCount(0);
         }
       }
@@ -83,10 +83,10 @@ export default function FooterSection() {
         stats?: { likes?: number };
       };
 
-      setLikes(data.stats?.likes ?? 126);
+      setLikes(data.stats?.likes ?? 0);
     } catch {
       // Keep optimistic UI even if telemetry write fails.
-      setLikes((value) => (value ?? 126) + 1);
+      setLikes((value) => (value ?? 0) + 1);
     }
   }
 
@@ -153,11 +153,11 @@ export default function FooterSection() {
                 }`}
               >
                 <span>{liked ? "Grazie" : "Like"}</span>
-                <span className="font-serif text-[1.4rem] leading-none">{likes ?? 126}</span>
+                <span className="font-serif text-[1.4rem] leading-none">{likes ?? 0}</span>
               </motion.button>
 
               <p className="mt-4 text-[10px] uppercase tracking-[0.16em] text-[#A9BBC0]">
-                Like registrati: {likes ?? 126} · Contatti ricevuti: {contactsCount ?? 0}
+                Like registrati: {likes ?? 0} · Contatti ricevuti: {contactsCount ?? 0}
               </p>
             </div>
           </FadeIn>

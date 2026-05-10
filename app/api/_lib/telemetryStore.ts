@@ -19,7 +19,7 @@ const LOCAL_DATA_DIR = path.join(process.cwd(), "app", ".contact-data");
 const VERCEL_DATA_DIR = path.join("/tmp", "m-tele-neuro-network", "contact-data");
 
 const DEFAULT_STATS: Stats = {
-  likes: 126,
+  likes: 0,
   contacts: 0,
   lastLikeAt: null,
   lastContactAt: null,
