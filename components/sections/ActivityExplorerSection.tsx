@@ -7,7 +7,7 @@ import Container from "../ui/Container";
 import FadeIn from "../ui/FadeIn";
 import SectionLabel from "../ui/SectionLabel";
 
-const years = ["2020", "2021", "2022", "2023", "2024", "2025"] as const;
+const years = ["2020", "2021", "2022", "2023", "2024", "2025", "2026"] as const;
 
 const sites = [
   { key: "nervi", label: "Nervi", color: "#1F2F35", x: 30, y: 36, labelX: 0, labelY: 13 },
@@ -18,6 +18,7 @@ const sites = [
   { key: "montescano", label: "Montescano", color: "#4A8FA3", x: 38, y: 31, labelX: 13, labelY: 8 },
   { key: "pavia", label: "Pavia", color: "#D9E5E8", x: 36.5, y: 28.5, labelX: 10, labelY: 7 },
   { key: "torino", label: "Torino", color: "#A9BBC0", x: 24, y: 25, labelX: 8, labelY: 9 },
+  { key: "telese", label: "Telese", color: "#88B7A5", x: 48, y: 52.5, labelX: 10, labelY: 10 },
 ] as const;
 
 type Year = (typeof years)[number];
@@ -26,35 +27,16 @@ type ViewMode = "year" | "site";
 
 type ActivityRow = {
   year: Year;
-  quarter: "I" | "II" | "III" | "IV";
-  label: string;
 } & Record<SiteKey, number>;
 
 const rows: ActivityRow[] = [
-  { year: "2020", quarter: "I", label: "I trimestre 2020", nervi: 4, tradate: 0, sciacca: 8, veruno: 0, bari: 0, montescano: 0, pavia: 0, torino: 0 },
-  { year: "2020", quarter: "II", label: "II trimestre 2020", nervi: 32, tradate: 1, sciacca: 11, veruno: 4, bari: 0, montescano: 0, pavia: 0, torino: 0 },
-  { year: "2020", quarter: "III", label: "III trimestre 2020", nervi: 32, tradate: 5, sciacca: 9, veruno: 1, bari: 0, montescano: 0, pavia: 0, torino: 0 },
-  { year: "2020", quarter: "IV", label: "IV trimestre 2020", nervi: 21, tradate: 3, sciacca: 12, veruno: 0, bari: 0, montescano: 0, pavia: 0, torino: 0 },
-  { year: "2021", quarter: "I", label: "I trimestre 2021", nervi: 24, tradate: 6, sciacca: 2, veruno: 0, bari: 2, montescano: 0, pavia: 0, torino: 0 },
-  { year: "2021", quarter: "II", label: "II trimestre 2021", nervi: 20, tradate: 11, sciacca: 0, veruno: 0, bari: 2, montescano: 0, pavia: 0, torino: 0 },
-  { year: "2021", quarter: "III", label: "III trimestre 2021", nervi: 24, tradate: 10, sciacca: 0, veruno: 23, bari: 2, montescano: 3, pavia: 0, torino: 0 },
-  { year: "2021", quarter: "IV", label: "IV trimestre 2021", nervi: 19, tradate: 13, sciacca: 0, veruno: 14, bari: 8, montescano: 1, pavia: 0, torino: 0 },
-  { year: "2022", quarter: "I", label: "I trimestre 2022", nervi: 12, tradate: 5, sciacca: 0, veruno: 0, bari: 7, montescano: 12, pavia: 3, torino: 4 },
-  { year: "2022", quarter: "II", label: "II trimestre 2022", nervi: 12, tradate: 9, sciacca: 0, veruno: 0, bari: 8, montescano: 7, pavia: 6, torino: 7 },
-  { year: "2022", quarter: "III", label: "III trimestre 2022", nervi: 11, tradate: 10, sciacca: 0, veruno: 0, bari: 15, montescano: 1, pavia: 3, torino: 2 },
-  { year: "2022", quarter: "IV", label: "IV trimestre 2022", nervi: 9, tradate: 14, sciacca: 0, veruno: 0, bari: 18, montescano: 9, pavia: 10, torino: 7 },
-  { year: "2023", quarter: "I", label: "I trimestre 2023", nervi: 10, tradate: 16, sciacca: 10, veruno: 0, bari: 24, montescano: 10, pavia: 12, torino: 4 },
-  { year: "2023", quarter: "II", label: "II trimestre 2023", nervi: 11, tradate: 18, sciacca: 0, veruno: 0, bari: 17, montescano: 8, pavia: 0, torino: 4 },
-  { year: "2023", quarter: "III", label: "III trimestre 2023", nervi: 6, tradate: 12, sciacca: 0, veruno: 0, bari: 7, montescano: 8, pavia: 6, torino: 6 },
-  { year: "2023", quarter: "IV", label: "IV trimestre 2023", nervi: 9, tradate: 12, sciacca: 0, veruno: 0, bari: 6, montescano: 0, pavia: 1, torino: 11 },
-  { year: "2024", quarter: "I", label: "I trimestre 2024", nervi: 8, tradate: 6, sciacca: 0, veruno: 0, bari: 31, montescano: 2, pavia: 6, torino: 9 },
-  { year: "2024", quarter: "II", label: "II trimestre 2024", nervi: 10, tradate: 7, sciacca: 13, veruno: 0, bari: 20, montescano: 4, pavia: 0, torino: 9 },
-  { year: "2024", quarter: "III", label: "III trimestre 2024", nervi: 10, tradate: 9, sciacca: 0, veruno: 0, bari: 20, montescano: 0, pavia: 1, torino: 7 },
-  { year: "2024", quarter: "IV", label: "IV trimestre 2024", nervi: 6, tradate: 12, sciacca: 0, veruno: 0, bari: 24, montescano: 0, pavia: 0, torino: 10 },
-  { year: "2025", quarter: "I", label: "I trimestre 2025", nervi: 4, tradate: 12, sciacca: 0, veruno: 0, bari: 12, montescano: 0, pavia: 0, torino: 10 },
-  { year: "2025", quarter: "II", label: "II trimestre 2025", nervi: 10, tradate: 10, sciacca: 0, veruno: 0, bari: 15, montescano: 4, pavia: 0, torino: 5 },
-  { year: "2025", quarter: "III", label: "III trimestre 2025", nervi: 18, tradate: 9, sciacca: 0, veruno: 0, bari: 18, montescano: 3, pavia: 3, torino: 3 },
-  { year: "2025", quarter: "IV", label: "IV trimestre 2025", nervi: 11, tradate: 5, sciacca: 5, veruno: 0, bari: 10, montescano: 5, pavia: 0, torino: 4 },
+  { year: "2020", nervi: 89, tradate: 9, sciacca: 40, veruno: 5, bari: 0, montescano: 0, pavia: 0, torino: 0, telese: 0 },
+  { year: "2021", nervi: 87, tradate: 40, sciacca: 2, veruno: 0, bari: 14, montescano: 4, pavia: 37, torino: 0, telese: 0 },
+  { year: "2022", nervi: 44, tradate: 38, sciacca: 0, veruno: 0, bari: 48, montescano: 29, pavia: 22, torino: 20, telese: 0 },
+  { year: "2023", nervi: 36, tradate: 58, sciacca: 0, veruno: 0, bari: 54, montescano: 26, pavia: 19, torino: 25, telese: 0 },
+  { year: "2024", nervi: 34, tradate: 34, sciacca: 0, veruno: 0, bari: 95, montescano: 6, pavia: 20, torino: 35, telese: 0 },
+  { year: "2025", nervi: 43, tradate: 36, sciacca: 0, veruno: 0, bari: 60, montescano: 12, pavia: 13, torino: 22, telese: 11 },
+  { year: "2026", nervi: 13, tradate: 0, sciacca: 0, veruno: 0, bari: 40, montescano: 0, pavia: 0, torino: 0, telese: 44 },
 ];
 
 function rowTotal(row: ActivityRow) {
@@ -65,92 +47,91 @@ function formatNumber(value: number) {
   return new Intl.NumberFormat("it-IT").format(value);
 }
 
+function formatDelta(value: number) {
+  if (value === 0) return "0%";
+  const prefix = value > 0 ? "+" : "";
+  return `${prefix}${Math.round(value)}%`;
+}
+
 export default function ActivityExplorerSection() {
   const [mode, setMode] = useState<ViewMode>("year");
-  const [activeYear, setActiveYear] = useState<Year>("2025");
-  const [activeSite, setActiveSite] = useState<SiteKey>("bari");
+  const [activeYear, setActiveYear] = useState<Year>("2026");
+  const [activeSite, setActiveSite] = useState<SiteKey>("telese");
 
-  const maxQuarterTotal = Math.max(...rows.map(rowTotal));
-
-  const yearlyRows = useMemo(
-    () => rows.filter((row) => row.year === activeYear),
+  const selectedYearRow = useMemo(
+    () => rows.find((row) => row.year === activeYear) ?? rows[rows.length - 1],
     [activeYear],
   );
 
-  const siteRows = useMemo(() => rows, []);
-
-  const yearSiteTotals = useMemo(() => {
-    return sites.map((site) => ({
-      ...site,
-      value: yearlyRows.reduce((sum, row) => sum + row[site.key], 0),
-    }));
-  }, [yearlyRows]);
-
-  const siteSeries = useMemo(
-    () =>
-      siteRows.map((row) => ({
-        ...row,
-        value: row[activeSite],
-      })),
-    [activeSite, siteRows],
-  );
-
-  const selectedSite = sites.find((site) => site.key === activeSite) ?? sites[0];
-  const yearTotal = yearlyRows.reduce((sum, row) => sum + rowTotal(row), 0);
-  const siteTotal = siteSeries.reduce((sum, row) => sum + row.value, 0);
-  const selectedTotal = mode === "year" ? yearTotal : siteTotal;
-  const leadingSite = [...yearSiteTotals].sort((a, b) => b.value - a.value)[0];
-  const peakYearQuarter = [...yearlyRows].sort(
-    (a, b) => rowTotal(b) - rowTotal(a),
-  )[0];
-  const peakSiteQuarter = [...siteSeries].sort((a, b) => b.value - a.value)[0];
-  const activeInstitutes = yearSiteTotals.filter((site) => site.value > 0).length;
-
   const yearTotals = useMemo(
     () =>
-      years.map((year) => ({
-        year,
-        value: rows
-          .filter((row) => row.year === year)
-          .reduce((sum, row) => sum + rowTotal(row), 0),
-      })),
+      rows.map((row, index) => {
+        const total = rowTotal(row);
+        const previousTotal = index > 0 ? rowTotal(rows[index - 1]) : total;
+        const delta = previousTotal > 0 ? ((total - previousTotal) / previousTotal) * 100 : 0;
+
+        return {
+          year: row.year,
+          value: total,
+          delta,
+        };
+      }),
     [],
   );
 
+  const selectedYearTotal = rowTotal(selectedYearRow);
   const maxYearTotal = Math.max(...yearTotals.map((item) => item.value), 1);
+  const peakYear = [...yearTotals].sort((a, b) => b.value - a.value)[0];
 
-  const siteTrendByYear = useMemo(
-    () =>
-      years.map((year) => ({
-        year,
-        value: rows
-          .filter((row) => row.year === year)
-          .reduce((sum, row) => sum + row[activeSite], 0),
-      })),
-    [activeSite],
-  );
-
-  const maxSiteTrendValue = Math.max(...siteTrendByYear.map((item) => item.value), 1);
-
-  const yearSiteRanking = useMemo(
+  const siteTotals = useMemo(
     () =>
       sites
         .map((site) => ({
           ...site,
-          value: yearlyRows.reduce((sum, row) => sum + row[site.key], 0),
+          total: rows.reduce((sum, row) => sum + row[site.key], 0),
         }))
-        .sort((a, b) => b.value - a.value),
-    [yearlyRows],
+        .sort((a, b) => b.total - a.total),
+    [],
   );
 
+  const selectedSiteMeta = sites.find((site) => site.key === activeSite) ?? sites[0];
+
+  const yearSiteRanking = useMemo(
+    () =>
+      sites
+        .map((site) => {
+          const value = selectedYearRow[site.key];
+          return {
+            ...site,
+            value,
+            share: selectedYearTotal > 0 ? (value / selectedYearTotal) * 100 : 0,
+          };
+        })
+        .sort((a, b) => b.value - a.value),
+    [selectedYearRow, selectedYearTotal],
+  );
+
+  const leadingSite = yearSiteRanking[0];
+  const activeInstitutes = yearSiteRanking.filter((site) => site.value > 0).length;
   const maxYearSiteValue = Math.max(...yearSiteRanking.map((item) => item.value), 1);
 
-  const peakYearTotal = [...yearTotals].sort((a, b) => b.value - a.value)[0];
+  const siteTrend = useMemo(
+    () =>
+      rows.map((row, index) => ({
+        year: row.year,
+        value: row[activeSite],
+        share: rowTotal(row) > 0 ? (row[activeSite] / rowTotal(row)) * 100 : 0,
+        index,
+      })),
+    [activeSite],
+  );
 
-  const trendPoints = siteTrendByYear.map((point, index) => ({
+  const siteTotal = siteTrend.reduce((sum, item) => sum + item.value, 0);
+  const siteActiveYears = siteTrend.filter((item) => item.value > 0).length;
+  const maxSiteTrendValue = Math.max(...siteTrend.map((item) => item.value), 1);
+  const trendPoints = siteTrend.map((point) => ({
     ...point,
-    index,
-    x: (index / (siteTrendByYear.length - 1)) * 100,
+    x: (point.index / (siteTrend.length - 1)) * 100,
     y: 100 - (point.value / maxSiteTrendValue) * 78,
   }));
 
@@ -159,13 +140,11 @@ export default function ActivityExplorerSection() {
     trendPoints[0],
   );
 
-  const trendPolylinePoints = siteTrendByYear
-    .map((point, index) => {
-      const x = (index / (siteTrendByYear.length - 1)) * 100;
-      const y = 100 - (point.value / maxSiteTrendValue) * 78;
-      return `${x},${y}`;
-    })
-    .join(" ");
+  const trendPolylinePoints = trendPoints.map((point) => `${point.x},${point.y}`).join(" ");
+  const selectedTotal = mode === "year" ? selectedYearTotal : siteTotal;
+  const networkTotal = rows.reduce((sum, row) => sum + rowTotal(row), 0);
+  const networkPeakSite = siteTotals[0];
+  const currentYearSiteValue = selectedYearRow[activeSite];
 
   return (
     <section className="relative overflow-hidden bg-[#F5F7F8] py-16 md:py-32 lg:py-44">
@@ -173,16 +152,18 @@ export default function ActivityExplorerSection() {
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-10">
           <FadeIn className="lg:col-span-5">
             <SectionLabel>Activity Explorer</SectionLabel>
-            <h2 className="font-serif text-[2.55rem] leading-[0.98] tracking-normal text-[#1F2F35] min-[380px]:text-[2.85rem] md:text-[5.4rem]">
-              Quarterly activity becomes a national clinical rhythm.
+            <h2 className="font-serif text-[2.5rem] leading-[0.98] tracking-normal text-[#1F2F35] min-[380px]:text-[2.8rem] md:text-[5.4rem]">
+              Annual activity outlines the clinical profile of the network.
             </h2>
           </FadeIn>
 
           <FadeIn delay={0.1} className="lg:col-span-5 lg:col-start-8">
-            <p className="border-t border-[#1F2F35]/10 pt-6 text-[18px] font-light leading-[1.72] text-[#4F5E64] md:pt-8 md:text-[23px] md:leading-[1.8]">
-              The 2020-2025 activity log is presented as a navigable sequence:
-              not a dashboard, but a measured view of how remote reporting
-              moved across institutes and time.
+            <p className="border-t border-[#1F2F35]/10 pt-6 text-[17px] font-light leading-[1.72] text-[#4F5E64] md:pt-8 md:text-[23px] md:leading-[1.8]">
+              The dataset is now structured as annual volumes, offering a more
+              coherent view of institutional contribution over time. The section
+              has been redesigned as a mobile-first reading tool: each year can
+              be reviewed as a network snapshot, while each institute can be
+              followed across the entire 2020-2026 horizon.
             </p>
           </FadeIn>
         </div>
@@ -190,7 +171,7 @@ export default function ActivityExplorerSection() {
         <FadeIn delay={0.14} className="mt-12 md:mt-20">
           <div className="border-y border-[#1F2F35]/10 py-6 md:py-8">
             <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-              <div className="lg:col-span-4">
+              <div className="lg:col-span-5">
                 <div className="inline-grid grid-cols-2 gap-px bg-[#1F2F35]/10 p-px">
                   {[
                     ["year", "Year focus"],
@@ -212,15 +193,14 @@ export default function ActivityExplorerSection() {
                   ))}
                 </div>
 
-                <div className="mt-6 grid grid-cols-2 gap-2 min-[460px]:grid-cols-3 min-[640px]:grid-cols-4 md:flex md:snap-x md:overflow-x-auto md:pb-1 md:[scrollbar-width:none] md:[&::-webkit-scrollbar]:hidden">
+                <div className="mt-6 grid grid-cols-2 gap-2.5 min-[460px]:grid-cols-3 min-[640px]:grid-cols-4 md:flex md:flex-wrap md:gap-2.5">
                   {(mode === "year" ? years : sites).map((item) => {
                     const key = typeof item === "string" ? item : item.key;
                     const label = typeof item === "string" ? item : item.label;
-                    const active =
-                      mode === "year" ? key === activeYear : key === activeSite;
+                    const active = mode === "year" ? key === activeYear : key === activeSite;
 
                     return (
-                      <button
+                      <motion.button
                         key={key}
                         type="button"
                         onClick={() =>
@@ -229,14 +209,15 @@ export default function ActivityExplorerSection() {
                             : setActiveSite(key as SiteKey)
                         }
                         aria-pressed={active}
-                        className={`min-h-9 w-full shrink-0 snap-start border px-2 py-2 text-center text-[9px] uppercase tracking-[0.09em] transition-colors min-[460px]:text-[10px] md:w-auto md:px-3 md:text-left md:text-[10px] md:tracking-[0.16em] ${
+                        whileTap={{ scale: 0.98 }}
+                        className={`min-h-10 w-full border px-2 py-2 text-center text-[9px] uppercase tracking-[0.1em] transition-colors min-[460px]:text-[10px] md:w-auto md:min-w-[5.5rem] md:px-3 md:text-[10px] md:tracking-[0.16em] ${
                           active
                             ? "border-[#2C5D6B] bg-white text-[#1F2F35]"
                             : "border-[#1F2F35]/10 text-[#7A8E95]"
                         }`}
                       >
                         {label}
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </div>
@@ -253,14 +234,15 @@ export default function ActivityExplorerSection() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.55 }}
                     aria-live="polite"
-                    className="mt-3 font-serif text-[3.25rem] leading-none text-[#1F2F35] md:text-[5rem]"
+                    className="mt-3 font-serif text-[3rem] leading-none text-[#1F2F35] md:text-[5rem]"
                   >
                     {formatNumber(selectedTotal)}
                   </motion.p>
                 </div>
+
                 <div>
                   <p className="text-[10px] uppercase leading-relaxed tracking-[0.2em] text-[#7A8E95]">
-                    {mode === "year" ? "Leading site" : "Peak quarter"}
+                    {mode === "year" ? "Leading institute" : "Peak year"}
                   </p>
                   <motion.p
                     key={`${mode}-${activeYear}-${activeSite}-leading`}
@@ -269,7 +251,9 @@ export default function ActivityExplorerSection() {
                     transition={{ duration: 0.55 }}
                     className="mt-5 text-[12px] uppercase leading-relaxed tracking-[0.2em] text-[#1F2F35]"
                   >
-                    {mode === "year" ? leadingSite.label : peakSiteQuarter.label}
+                    {mode === "year"
+                      ? `${leadingSite.label} · ${formatNumber(leadingSite.value)}`
+                      : `${siteTrendPeak.year} · ${formatNumber(siteTrendPeak.value)}`}
                   </motion.p>
                 </div>
               </div>
@@ -279,7 +263,7 @@ export default function ActivityExplorerSection() {
 
         <div className="mt-10 grid gap-8 lg:mt-16 lg:grid-cols-12 lg:gap-10">
           <FadeIn delay={0.18} className="lg:col-span-5">
-            <div className="relative min-h-[390px] overflow-hidden border-y border-[#1F2F35]/10 bg-white/45 py-8 md:min-h-[520px] md:py-10">
+            <div className="relative min-h-[430px] overflow-hidden border-y border-[#1F2F35]/10 bg-white/45 py-8 md:min-h-[560px] md:py-10">
               <div className="absolute inset-x-0 top-0 flex items-center justify-between px-5 py-5 md:px-8">
                 <span className="text-[10px] uppercase tracking-[0.22em] text-[#7A8E95]">
                   Institute geography
@@ -290,12 +274,12 @@ export default function ActivityExplorerSection() {
                   animate={{ opacity: 1 }}
                   className="font-serif text-2xl leading-none text-[#1F2F35]"
                 >
-                  {mode === "year" ? activeYear : selectedSite.label}
+                  {mode === "year" ? activeYear : selectedSiteMeta.label}
                 </motion.span>
               </div>
 
-              <div className="absolute inset-x-4 bottom-28 top-16 flex items-center justify-center md:inset-x-7 md:bottom-28 md:top-20">
-                <div className="relative aspect-[0.72/1] h-full max-h-[360px] w-full max-w-[270px] md:max-h-[410px] md:max-w-[305px]">
+              <div className="absolute inset-x-4 bottom-28 top-18 flex items-center justify-center md:inset-x-7 md:bottom-28 md:top-20">
+                <div className="relative aspect-[0.72/1] h-full max-h-[370px] w-full max-w-[270px] md:max-h-[430px] md:max-w-[310px]">
                   <Image
                     src="/it.svg"
                     alt=""
@@ -305,56 +289,67 @@ export default function ActivityExplorerSection() {
                   />
 
                   <div className="absolute inset-0">
-                {yearSiteTotals.map((site, index) => {
-                  const isSelected = mode === "site" && site.key === activeSite;
-                  const radius = 6 + Math.sqrt(site.value) * 1.25;
-                  const opacity =
-                    mode === "year" || isSelected ? 0.92 : site.value > 0 ? 0.28 : 0.14;
+                    {sites.map((site, index) => {
+                      const yearValue = selectedYearRow[site.key];
+                      const allTimeValue = siteTotals.find((entry) => entry.key === site.key)?.total ?? 0;
+                      const pointValue = mode === "year" ? yearValue : allTimeValue;
+                      const isSelected = mode === "site" && site.key === activeSite;
+                      const radius = 5 + Math.sqrt(pointValue) * 1.15;
+                      const opacity =
+                        mode === "year"
+                          ? pointValue > 0
+                            ? 0.9
+                            : 0.14
+                          : isSelected
+                            ? 0.98
+                            : allTimeValue > 0
+                              ? 0.22
+                              : 0.12;
 
-                  return (
-                    <motion.button
-                      key={site.key}
-                      type="button"
-                      onClick={() => {
-                        setMode("site");
-                        setActiveSite(site.key);
-                      }}
-                      aria-pressed={isSelected}
-                      initial={{ scale: 0, opacity: 0 }}
-                      whileInView={{ scale: 1, opacity }}
-                      animate={{ scale: isSelected ? 1.18 : 1, opacity }}
-                      viewport={{ once: true, margin: "-20%" }}
-                      transition={{
-                        duration: 0.75,
-                        delay: index * 0.04,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
-                      className="absolute -translate-x-1/2 -translate-y-1/2 text-left"
-                      style={{ left: `${site.x}%`, top: `${site.y}%` }}
-                      aria-label={`View ${site.label} (${formatNumber(site.value)} exams)`}
-                    >
-                      <span
-                        className="block rounded-full border border-white/80 shadow-[0_14px_34px_rgba(31,47,53,0.12)]"
-                        style={{
-                          width: radius * 2,
-                          height: radius * 2,
-                          backgroundColor: site.color,
-                        }}
-                      />
-                      <span
-                        className={`absolute whitespace-nowrap text-[9px] uppercase tracking-[0.12em] text-[#1F2F35] transition-opacity ${
-                          isSelected ? "opacity-100" : "opacity-0 md:opacity-100"
-                        }`}
-                        style={{
-                          left: `${site.labelX}%`,
-                          top: `${site.labelY}%`,
-                        }}
-                      >
-                        {site.label}
-                      </span>
-                    </motion.button>
-                  );
-                })}
+                      return (
+                        <motion.button
+                          key={site.key}
+                          type="button"
+                          onClick={() => {
+                            setMode("site");
+                            setActiveSite(site.key);
+                          }}
+                          aria-pressed={isSelected}
+                          initial={{ scale: 0, opacity: 0 }}
+                          whileInView={{ scale: 1, opacity }}
+                          animate={{ scale: isSelected ? 1.18 : 1, opacity }}
+                          viewport={{ once: true, margin: "-20%" }}
+                          transition={{
+                            duration: 0.6,
+                            delay: index * 0.04,
+                            ease: [0.22, 1, 0.36, 1],
+                          }}
+                          className="absolute -translate-x-1/2 -translate-y-1/2 text-left"
+                          style={{ left: `${site.x}%`, top: `${site.y}%` }}
+                          aria-label={`${site.label}: ${formatNumber(pointValue)}`}
+                        >
+                          <span
+                            className="block rounded-full border border-white/80 shadow-[0_14px_34px_rgba(31,47,53,0.12)]"
+                            style={{
+                              width: radius * 2,
+                              height: radius * 2,
+                              backgroundColor: site.color,
+                            }}
+                          />
+                          <span
+                            className={`absolute whitespace-nowrap text-[9px] uppercase tracking-[0.12em] text-[#1F2F35] transition-opacity ${
+                              isSelected || mode === "year" ? "opacity-100" : "opacity-0 md:opacity-100"
+                            }`}
+                            style={{
+                              left: `${site.labelX}%`,
+                              top: `${site.labelY}%`,
+                            }}
+                          >
+                            {site.label}
+                          </span>
+                        </motion.button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -362,28 +357,26 @@ export default function ActivityExplorerSection() {
               <div className="absolute inset-x-5 bottom-5 grid grid-cols-2 gap-5 border-t border-[#1F2F35]/10 pt-5 md:inset-x-8 md:grid-cols-3">
                 <div>
                   <p className="font-serif text-3xl leading-none text-[#1F2F35]">
-                    {mode === "year" ? activeInstitutes : years.length}
+                    {mode === "year" ? activeInstitutes : siteActiveYears}
                   </p>
                   <p className="mt-2 text-[9px] uppercase tracking-[0.18em] text-[#7A8E95]">
-                    {mode === "year" ? "Active sites" : "Observed years"}
+                    {mode === "year" ? "Active sites" : "Active years"}
                   </p>
                 </div>
                 <div>
                   <p className="font-serif text-3xl leading-none text-[#1F2F35]">
-                    {formatNumber(
-                      mode === "year" ? rowTotal(peakYearQuarter) : peakSiteQuarter.value,
-                    )}
+                    {formatNumber(mode === "year" ? leadingSite.value : currentYearSiteValue)}
                   </p>
                   <p className="mt-2 text-[9px] uppercase tracking-[0.18em] text-[#7A8E95]">
-                    Peak value
+                    {mode === "year" ? "Lead volume" : `${activeYear} volume`}
                   </p>
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <p className="font-serif text-3xl leading-none text-[#1F2F35]">
-                    24
+                    {years.length}
                   </p>
                   <p className="mt-2 text-[9px] uppercase tracking-[0.18em] text-[#7A8E95]">
-                    Quarters
+                    Observed years
                   </p>
                 </div>
               </div>
@@ -392,297 +385,369 @@ export default function ActivityExplorerSection() {
 
           <FadeIn delay={0.22} className="lg:col-span-7">
             <LayoutGroup id="activity-explorer-panels">
-            <AnimatePresence mode="wait" initial={false}>
-              {mode === "year" ? (
-                <motion.div
-                  key={`year-${activeYear}`}
-                  initial={{ opacity: 0, y: 24, scale: 0.985 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -18, scale: 0.99 }}
-                  transition={{ duration: 0.56, ease: [0.22, 1, 0.36, 1] }}
-                  className="space-y-5"
-                >
+              <AnimatePresence mode="wait" initial={false}>
+                {mode === "year" ? (
                   <motion.div
-                    layout
-                    layoutId="activity-top-panel"
-                    className="rounded-sm border-y border-[#1F2F35]/10 bg-white/45 p-4 md:p-5"
+                    key={`year-${activeYear}`}
+                    initial={{ opacity: 0, y: 24, scale: 0.985 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -18, scale: 0.99 }}
+                    transition={{ duration: 0.56, ease: [0.22, 1, 0.36, 1] }}
+                    className="space-y-5"
                   >
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-[#7A8E95]">
-                      Timeline 2020-2025
-                    </p>
-                    <div className="mt-4 space-y-2">
-                      {yearTotals.map((item, index) => {
-                        const isActive = item.year === activeYear;
-                        return (
-                          <button
-                            key={item.year}
-                            type="button"
-                            onClick={() => setActiveYear(item.year)}
-                            aria-pressed={isActive}
-                            className={`grid w-full grid-cols-[3.1rem_1fr_2.4rem] items-center gap-3 rounded-sm px-2 py-2 text-left transition-colors ${
-                              isActive ? "bg-[#1F2F35] text-white" : "text-[#1F2F35]"
-                            }`}
-                          >
-                            <span className="font-serif text-xl leading-none md:text-2xl">
-                              {item.year}
-                            </span>
-                            <span className={`relative h-2 overflow-hidden ${isActive ? "bg-white/15" : "bg-white"}`}>
-                              <motion.span
-                                initial={{ width: 0 }}
-                                animate={{ width: `${(item.value / maxYearTotal) * 100}%` }}
-                                transition={{ duration: 0.8, delay: index * 0.04 }}
-                                className={`absolute inset-y-0 left-0 ${isActive ? "bg-white" : "bg-[#2C5D6B]"}`}
-                              />
-                            </span>
-                            <span className="relative text-right text-sm leading-none md:text-base">
-                              {Math.round(item.value / 10) / 10}
-                              {item.year === peakYearTotal.year && (
-                                <motion.span
-                                  initial={{ opacity: 0, y: 4 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{ duration: 0.45, delay: 0.2 }}
-                                  className={`absolute -right-1 -top-5 whitespace-nowrap text-[8px] uppercase tracking-[0.18em] ${
-                                    isActive ? "text-white/80" : "text-[#2C5D6B]"
-                                  }`}
-                                >
-                                  peak
-                                </motion.span>
-                              )}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    layout
-                    layoutId="activity-bottom-panel"
-                    className="rounded-sm border-y border-[#1F2F35]/10 bg-white/45 p-4 md:p-5"
-                  >
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-[#7A8E95]">
-                      Quarter breakdown {activeYear}
-                    </p>
-                    <div className="mt-4 space-y-3">
-                      {yearlyRows.map((row, rowIndex) => {
-                        const total = rowTotal(row);
-                        return (
-                          <div
-                            key={row.label}
-                            className="grid grid-cols-[3.2rem_1fr_2.2rem] items-center gap-3"
-                          >
-                            <p className="font-serif text-[1.2rem] leading-none text-[#1F2F35] md:text-[1.45rem]">
-                              {row.quarter}
-                            </p>
-                            <div className="relative h-8 overflow-hidden bg-white md:h-9">
-                              <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${(total / maxQuarterTotal) * 100}%` }}
-                                transition={{
-                                  duration: 0.8,
-                                  delay: rowIndex * 0.06,
-                                  ease: [0.22, 1, 0.36, 1],
-                                }}
-                                className="flex h-full"
-                              >
-                                {sites.map((site) => {
-                                  const value = row[site.key];
-                                  if (!value) return null;
-                                  return (
-                                    <span
-                                      key={site.key}
-                                      title={`${site.label}: ${value}`}
-                                      style={{
-                                        width: `${(value / total) * 100}%`,
-                                        backgroundColor: site.color,
-                                      }}
-                                    />
-                                  );
-                                })}
-                              </motion.div>
-                            </div>
-                            <p className="text-right font-serif text-[1.15rem] leading-none text-[#1F2F35] md:text-[1.35rem]">
-                              {total}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={`site-${activeSite}`}
-                  initial={{ opacity: 0, y: 24, scale: 0.985 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -18, scale: 0.99 }}
-                  transition={{ duration: 0.56, ease: [0.22, 1, 0.36, 1] }}
-                  className="space-y-5"
-                >
-                  <motion.div
-                    layout
-                    layoutId="activity-top-panel"
-                    className="rounded-sm border-y border-[#1F2F35]/10 bg-white/45 p-4 md:p-5"
-                  >
-                    <div className="flex items-end justify-between gap-6">
-                      <div>
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-[#7A8E95]">
-                          City trend
-                        </p>
-                        <p className="mt-2 font-serif text-[2rem] leading-none text-[#1F2F35] md:text-[2.6rem]">
-                          {selectedSite.label}
+                    <motion.div
+                      layout
+                      layoutId="activity-top-panel"
+                      className="rounded-sm border-y border-[#1F2F35]/10 bg-white/45 p-4 md:p-5"
+                    >
+                      <div className="flex items-end justify-between gap-6">
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.2em] text-[#7A8E95]">
+                            Annual pulse 2020-2026
+                          </p>
+                          <p className="mt-2 font-serif text-[2rem] leading-none text-[#1F2F35] md:text-[2.6rem]">
+                            {activeYear}
+                          </p>
+                        </div>
+                        <p className="font-serif text-[2.2rem] leading-none text-[#1F2F35] md:text-[2.8rem]">
+                          {formatNumber(selectedYearTotal)}
                         </p>
                       </div>
-                      <p className="font-serif text-[2.2rem] leading-none text-[#1F2F35] md:text-[2.8rem]">
-                        {formatNumber(siteTotal)}
-                      </p>
-                    </div>
 
-                    <div className="relative mt-4">
-                      <svg viewBox="0 0 100 100" className="h-24 w-full md:h-28" aria-hidden="true">
-                        <polyline
-                          points="0,100 100,100"
-                          fill="none"
-                          stroke="#D9E5E8"
-                          strokeWidth="1"
-                          vectorEffect="non-scaling-stroke"
-                        />
-                        <motion.polyline
-                          points={trendPolylinePoints}
-                          fill="none"
-                          stroke={selectedSite.color}
-                          strokeWidth="2"
-                          vectorEffect="non-scaling-stroke"
-                          initial={{ pathLength: 0, opacity: 0 }}
-                          animate={{ pathLength: 1, opacity: 1 }}
-                          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                        />
-                        {trendPoints.map((point, index) => {
+                      <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                        {yearTotals.map((item, index) => {
+                          const active = item.year === activeYear;
                           return (
-                            <motion.circle
-                              key={point.year}
-                              cx={point.x}
-                              cy={point.y}
-                              r="1.5"
-                              fill={selectedSite.color}
-                              initial={{ scale: 0, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              transition={{ duration: 0.38, delay: 0.2 + index * 0.06 }}
-                            />
+                            <motion.button
+                              key={item.year}
+                              type="button"
+                              onClick={() => setActiveYear(item.year)}
+                              aria-pressed={active}
+                              whileTap={{ scale: 0.985 }}
+                              className={`rounded-sm border px-4 py-4 text-left transition-colors ${
+                                active
+                                  ? "border-[#1F2F35] bg-[#1F2F35] text-white shadow-[0_18px_42px_rgba(31,47,53,0.16)]"
+                                  : "border-[#1F2F35]/10 bg-white text-[#1F2F35]"
+                              }`}
+                            >
+                              <div className="flex items-start justify-between gap-4">
+                                <div>
+                                  <p className="text-[10px] uppercase tracking-[0.18em] opacity-70">
+                                    {item.year}
+                                  </p>
+                                  <p className="mt-3 font-serif text-[2rem] leading-none md:text-[2.3rem]">
+                                    {formatNumber(item.value)}
+                                  </p>
+                                </div>
+                                {item.year === peakYear.year && (
+                                  <span className={`border px-2 py-1 text-[8px] uppercase tracking-[0.18em] ${active ? "border-white/30 text-white" : "border-[#2C5D6B]/20 text-[#2C5D6B]"}`}>
+                                    Peak
+                                  </span>
+                                )}
+                              </div>
+                              <div className={`mt-4 h-2 overflow-hidden ${active ? "bg-white/15" : "bg-[#F0F4F5]"}`}>
+                                <motion.div
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${(item.value / maxYearTotal) * 100}%` }}
+                                  transition={{ duration: 0.75, delay: index * 0.04 }}
+                                  className={`h-full ${active ? "bg-white" : "bg-[#2C5D6B]"}`}
+                                />
+                              </div>
+                              <p className={`mt-3 text-[10px] uppercase tracking-[0.18em] ${active ? "text-white/70" : "text-[#7A8E95]"}`}>
+                                Delta {formatDelta(item.delta)}
+                              </p>
+                            </motion.button>
                           );
                         })}
-                      </svg>
-                      <motion.div
-                        key={`${activeSite}-trend-peak`}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.45, delay: 0.35 }}
-                        className="pointer-events-none absolute"
-                        style={{
-                          left: `${siteTrendPeak.x}%`,
-                          top: `${siteTrendPeak.y}%`,
-                          transform: "translate(-50%, -130%)",
-                        }}
-                      >
-                        <span className="inline-block whitespace-nowrap bg-[#1F2F35] px-2 py-1 text-[8px] uppercase tracking-[0.16em] text-white">
-                          Peak {siteTrendPeak.year.slice(2)} · {formatNumber(siteTrendPeak.value)}
-                        </span>
-                      </motion.div>
-                      <div className="mt-2 grid grid-cols-6 text-[9px] uppercase tracking-[0.14em] text-[#7A8E95]">
-                        {siteTrendByYear.map((point) => (
-                          <span key={point.year} className="text-center">
-                            {point.year.slice(2)}
-                          </span>
-                        ))}
                       </div>
-                    </div>
-                  </motion.div>
+                    </motion.div>
 
-                  <motion.div
-                    layout
-                    layoutId="activity-bottom-panel"
-                    className="rounded-sm border-y border-[#1F2F35]/10 bg-white/45 p-4 md:p-5"
-                  >
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-[#7A8E95]">
-                      City view {activeYear}
-                    </p>
                     <motion.div
-                      initial="hidden"
-                      animate="show"
-                      variants={{
-                        hidden: { opacity: 0 },
-                        show: {
-                          opacity: 1,
-                          transition: { staggerChildren: 0.055, delayChildren: 0.08 },
-                        },
-                      }}
-                      className="mt-4 space-y-2"
+                      layout
+                      layoutId="activity-bottom-panel"
+                      className="rounded-sm border-y border-[#1F2F35]/10 bg-white/45 p-4 md:p-5"
                     >
-                      {yearSiteRanking.map((site, index) => {
-                        const active = site.key === activeSite;
-                        return (
+                      <div className="flex items-start justify-between gap-6">
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.2em] text-[#7A8E95]">
+                            Institute mix {activeYear}
+                          </p>
+                          <p className="mt-2 max-w-[28rem] text-[15px] leading-[1.65] text-[#4F5E64] md:text-[16px]">
+                            The annual view emphasizes institutional distribution:
+                            it clarifies where clinical volume concentrates, which
+                            centres remain structurally active, and how the network
+                            profile changes from one year to the next.
+                          </p>
+                        </div>
+                        <div className="hidden text-right md:block">
+                          <p className="text-[10px] uppercase tracking-[0.18em] text-[#7A8E95]">
+                            Active institutes
+                          </p>
+                          <p className="mt-2 font-serif text-[2rem] leading-none text-[#1F2F35]">
+                            {activeInstitutes}
+                          </p>
+                        </div>
+                      </div>
+
+                      <motion.div
+                        initial="hidden"
+                        animate="show"
+                        variants={{
+                          hidden: { opacity: 0 },
+                          show: {
+                            opacity: 1,
+                            transition: { staggerChildren: 0.05, delayChildren: 0.06 },
+                          },
+                        }}
+                        className="mt-5 space-y-2.5"
+                      >
+                        {yearSiteRanking.map((site, index) => (
                           <motion.button
-                            key={site.key}
+                            key={`${activeYear}-${site.key}`}
                             type="button"
-                            onClick={() => setActiveSite(site.key)}
-                            variants={{
-                              hidden: { opacity: 0, y: 12 },
-                              show: { opacity: 1, y: 0 },
+                            onClick={() => {
+                              setMode("site");
+                              setActiveSite(site.key);
                             }}
+                            variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
                             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                            className={`grid w-full grid-cols-[6.2rem_1fr_2.4rem] items-center gap-3 rounded-sm px-2 py-2 text-left transition-colors ${
-                              active ? "bg-[#1F2F35] text-white" : "text-[#1F2F35]"
-                            }`}
-                            aria-pressed={active}
+                            whileTap={{ scale: 0.992 }}
+                            className="grid w-full grid-cols-[5.8rem_1fr_3rem] items-center gap-3 rounded-sm px-2 py-2.5 text-left text-[#1F2F35] transition-colors hover:bg-white"
                           >
                             <span className="text-[11px] uppercase tracking-[0.14em] md:text-[10px] md:tracking-[0.16em]">
                               {site.label}
                             </span>
-                            <span className={`relative h-2 overflow-hidden ${active ? "bg-white/15" : "bg-white"}`}>
+                            <span className="relative h-3 overflow-hidden bg-white">
                               <motion.span
                                 initial={{ width: 0 }}
                                 animate={{ width: `${(site.value / maxYearSiteValue) * 100}%` }}
                                 transition={{ duration: 0.8, delay: index * 0.04 }}
-                                className={`absolute inset-y-0 left-0 ${active ? "bg-white" : "bg-[#2C5D6B]"}`}
+                                className="absolute inset-y-0 left-0"
+                                style={{ backgroundColor: site.color }}
                               />
                             </span>
                             <span className="text-right font-serif text-[1.15rem] leading-none md:text-[1.25rem]">
                               {site.value}
                             </span>
+                            <span className="col-span-3 text-[9px] uppercase tracking-[0.16em] text-[#7A8E95]">
+                              {site.share > 0 ? `${site.share.toFixed(1)}% of annual total` : "No recorded volume"}
+                            </span>
                           </motion.button>
-                        );
-                      })}
+                        ))}
+                      </motion.div>
                     </motion.div>
                   </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                ) : (
+                  <motion.div
+                    key={`site-${activeSite}`}
+                    initial={{ opacity: 0, y: 24, scale: 0.985 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -18, scale: 0.99 }}
+                    transition={{ duration: 0.56, ease: [0.22, 1, 0.36, 1] }}
+                    className="space-y-5"
+                  >
+                    <motion.div
+                      layout
+                      layoutId="activity-top-panel"
+                      className="rounded-sm border-y border-[#1F2F35]/10 bg-white/45 p-4 md:p-5"
+                    >
+                      <div className="flex items-end justify-between gap-6">
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.2em] text-[#7A8E95]">
+                            Institute trace
+                          </p>
+                          <p className="mt-2 font-serif text-[2rem] leading-none text-[#1F2F35] md:text-[2.6rem]">
+                            {selectedSiteMeta.label}
+                          </p>
+                        </div>
+                        <p className="font-serif text-[2.2rem] leading-none text-[#1F2F35] md:text-[2.8rem]">
+                          {formatNumber(siteTotal)}
+                        </p>
+                      </div>
+
+                      <div className="relative mt-4">
+                        <svg viewBox="0 0 100 100" className="h-28 w-full md:h-32" aria-hidden="true">
+                          <polyline
+                            points="0,100 100,100"
+                            fill="none"
+                            stroke="#D9E5E8"
+                            strokeWidth="1"
+                            vectorEffect="non-scaling-stroke"
+                          />
+                          <motion.polyline
+                            points={trendPolylinePoints}
+                            fill="none"
+                            stroke={selectedSiteMeta.color}
+                            strokeWidth="2.5"
+                            vectorEffect="non-scaling-stroke"
+                            initial={{ pathLength: 0, opacity: 0 }}
+                            animate={{ pathLength: 1, opacity: 1 }}
+                            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                          />
+                          {trendPoints.map((point, index) => (
+                            <motion.circle
+                              key={point.year}
+                              cx={point.x}
+                              cy={point.y}
+                              r="1.8"
+                              fill={selectedSiteMeta.color}
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ duration: 0.38, delay: 0.2 + index * 0.06 }}
+                            />
+                          ))}
+                        </svg>
+                        <motion.div
+                          key={`${activeSite}-trend-peak`}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.45, delay: 0.35 }}
+                          className="pointer-events-none absolute"
+                          style={{
+                            left: `${siteTrendPeak.x}%`,
+                            top: `${siteTrendPeak.y}%`,
+                            transform: "translate(-50%, -135%)",
+                          }}
+                        >
+                          <span className="inline-block whitespace-nowrap bg-[#1F2F35] px-2 py-1 text-[8px] uppercase tracking-[0.16em] text-white">
+                            Peak {siteTrendPeak.year} · {formatNumber(siteTrendPeak.value)}
+                          </span>
+                        </motion.div>
+                        <div className="mt-2 grid grid-cols-7 text-[9px] uppercase tracking-[0.14em] text-[#7A8E95]">
+                          {siteTrend.map((point) => (
+                            <span key={point.year} className="text-center">
+                              {point.year.slice(2)}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    <motion.div
+                      layout
+                      layoutId="activity-bottom-panel"
+                      className="rounded-sm border-y border-[#1F2F35]/10 bg-white/45 p-4 md:p-5"
+                    >
+                      <div className="flex items-start justify-between gap-6">
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.2em] text-[#7A8E95]">
+                            Annual footprint
+                          </p>
+                          <p className="mt-2 max-w-[28rem] text-[15px] leading-[1.65] text-[#4F5E64] md:text-[16px]">
+                            Each annual row places the selected institute in the
+                            broader network context, combining absolute volume,
+                            proportional weight, and a direct return to the
+                            corresponding year overview.
+                          </p>
+                        </div>
+                        <div className="hidden text-right md:block">
+                          <p className="text-[10px] uppercase tracking-[0.18em] text-[#7A8E95]">
+                            Active years
+                          </p>
+                          <p className="mt-2 font-serif text-[2rem] leading-none text-[#1F2F35]">
+                            {siteActiveYears}
+                          </p>
+                        </div>
+                      </div>
+
+                      <motion.div
+                        initial="hidden"
+                        animate="show"
+                        variants={{
+                          hidden: { opacity: 0 },
+                          show: {
+                            opacity: 1,
+                            transition: { staggerChildren: 0.055, delayChildren: 0.08 },
+                          },
+                        }}
+                        className="mt-5 space-y-2.5"
+                      >
+                        {siteTrend.map((item, index) => {
+                          const active = item.year === activeYear;
+                          return (
+                            <motion.button
+                              key={`${activeSite}-${item.year}`}
+                              type="button"
+                              onClick={() => setActiveYear(item.year)}
+                              variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
+                              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                              whileTap={{ scale: 0.992 }}
+                              className={`grid w-full grid-cols-[3.2rem_1fr_3rem] items-center gap-3 rounded-sm px-2 py-2.5 text-left transition-colors ${
+                                active ? "bg-[#1F2F35] text-white" : "text-[#1F2F35] hover:bg-white"
+                              }`}
+                              aria-pressed={active}
+                            >
+                              <span className="font-serif text-[1.2rem] leading-none md:text-[1.35rem]">
+                                {item.year.slice(2)}
+                              </span>
+                              <span className={`relative h-3 overflow-hidden ${active ? "bg-white/15" : "bg-white"}`}>
+                                <motion.span
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${(item.value / maxSiteTrendValue) * 100}%` }}
+                                  transition={{ duration: 0.8, delay: index * 0.04 }}
+                                  className={`absolute inset-y-0 left-0 ${active ? "bg-white" : ""}`}
+                                  style={active ? undefined : { backgroundColor: selectedSiteMeta.color }}
+                                />
+                              </span>
+                              <span className="text-right font-serif text-[1.15rem] leading-none md:text-[1.25rem]">
+                                {item.value}
+                              </span>
+                              <span className={`col-span-3 text-[9px] uppercase tracking-[0.16em] ${active ? "text-white/70" : "text-[#7A8E95]"}`}>
+                                {item.share > 0 ? `${item.share.toFixed(1)}% of ${item.year} network total` : "No recorded volume"}
+                              </span>
+                            </motion.button>
+                          );
+                        })}
+                      </motion.div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </LayoutGroup>
           </FadeIn>
         </div>
 
         <FadeIn delay={0.26} className="mt-10 md:mt-14">
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-[#1F2F35]/10 pt-6 md:grid-cols-4 lg:grid-cols-8">
-            {sites.map((site) => (
-              <button
-                key={site.key}
-                type="button"
-                onClick={() => {
-                  setMode("site");
-                  setActiveSite(site.key);
-                }}
-                aria-pressed={mode === "site" && activeSite === site.key}
-                className="flex items-center gap-3 text-left"
-              >
-                <span
-                  className="h-2 w-6 shrink-0"
-                  style={{ backgroundColor: site.color }}
-                />
-                <span className="text-[10px] uppercase tracking-[0.16em] text-[#7A8E95]">
-                  {site.label}
-                </span>
-              </button>
-            ))}
+          <div className="grid gap-4 border-t border-[#1F2F35]/10 pt-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-4 md:grid-cols-5 xl:grid-cols-9">
+              {siteTotals.map((site) => (
+                <button
+                  key={site.key}
+                  type="button"
+                  onClick={() => {
+                    setMode("site");
+                    setActiveSite(site.key);
+                  }}
+                  aria-pressed={mode === "site" && activeSite === site.key}
+                  className="flex items-center gap-3 text-left"
+                >
+                  <span
+                    className="h-2 w-6 shrink-0"
+                    style={{ backgroundColor: site.color }}
+                  />
+                  <span>
+                    <span className="block text-[10px] uppercase tracking-[0.16em] text-[#7A8E95]">
+                      {site.label}
+                    </span>
+                    <span className="mt-1 block font-serif text-[1.1rem] leading-none text-[#1F2F35]">
+                      {formatNumber(site.total)}
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <div className="border-t border-[#1F2F35]/10 pt-4 md:border-l md:border-t-0 md:pl-6 md:pt-0">
+              <p className="text-[10px] uppercase tracking-[0.18em] text-[#7A8E95]">
+                Network total
+              </p>
+              <p className="mt-2 font-serif text-[2.4rem] leading-none text-[#1F2F35]">
+                {formatNumber(networkTotal)}
+              </p>
+              <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-[#7A8E95]">
+                Peak institute {networkPeakSite.label}
+              </p>
+            </div>
           </div>
         </FadeIn>
       </Container>
