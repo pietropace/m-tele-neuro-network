@@ -27,8 +27,7 @@ export default function LoginPage() {
 
         <div className="flex justify-start md:justify-end">
           <SignIn
-            routing="path"
-            path="/login"
+            routing="hash"
             fallbackRedirectUrl="/admin"
             oauthFlow="redirect"
             appearance={{
