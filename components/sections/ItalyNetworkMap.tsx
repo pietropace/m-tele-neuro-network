@@ -49,13 +49,9 @@ export default function ItalyNetworkMap() {
                   pathLength: 0,
                   opacity: 0,
                 }}
-                whileInView={{
+                animate={{
                   pathLength: 1,
                   opacity: 1,
-                }}
-                viewport={{
-                  once: true,
-                  margin: "-12%",
                 }}
                 transition={{
                   duration: 1.4,
@@ -70,12 +66,8 @@ export default function ItalyNetworkMap() {
               initial={{
                 opacity: 0,
               }}
-              whileInView={{
+              animate={{
                 opacity: 1,
-              }}
-              viewport={{
-                once: true,
-                margin: "-12%",
               }}
               transition={{
                 duration: 0.7,
