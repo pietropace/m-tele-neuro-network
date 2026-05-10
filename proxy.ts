@@ -5,6 +5,7 @@ type SiteAccessMode = "public" | "private";
 type SessionClaimsWithRole = {
   metadata?: { role?: string };
   publicMetadata?: { role?: string };
+  public_metadata?: { role?: string };
 };
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)", "/studio(.*)"]);
@@ -26,7 +27,7 @@ export default clerkMiddleware(async (auth, req) => {
   if (shouldProtect) {
     const session = await auth.protect();
     const claims = session.sessionClaims as SessionClaimsWithRole;
-    const role = claims.metadata?.role ?? claims.publicMetadata?.role;
+    const role = claims.metadata?.role ?? claims.publicMetadata?.role ?? claims.public_metadata?.role;
 
     if (isAdminRoute(req) && role !== "admin") {
       return Response.redirect(new URL("/", req.url));

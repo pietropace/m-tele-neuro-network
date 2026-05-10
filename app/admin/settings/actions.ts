@@ -14,8 +14,9 @@ export async function updateSiteAccessMode(formData: FormData) {
   const claims = sessionClaims as {
     metadata?: { role?: string };
     publicMetadata?: { role?: string };
+    public_metadata?: { role?: string };
   };
-  const role = claims.metadata?.role ?? claims.publicMetadata?.role;
+  const role = claims.metadata?.role ?? claims.publicMetadata?.role ?? claims.public_metadata?.role;
 
   if (role !== "admin") {
     redirect("/");
