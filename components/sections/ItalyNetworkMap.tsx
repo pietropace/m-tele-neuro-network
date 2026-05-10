@@ -1,73 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { italyNetworkNodes, MAP_VIEWBOX_SIZE } from "./networkMapData";
 
-type MapNode = {
-  id: string;
-  name: string;
-  x: number;
-  y: number;
-  labelDesktopX: number;
-  labelDesktopY: number;
-  anchorDesktop: "start" | "end";
-};
-
-const nodes: MapNode[] = [
-  {
-    id: "02",
-    name: "Milano",
-    x: 272,
-    y: 178,
-    labelDesktopX: 56,
-    labelDesktopY: 17,
-    anchorDesktop: "start",
-  },
-  {
-    id: "01",
-    name: "Veruno",
-    x: 323,
-    y: 206,
-    labelDesktopX: -22,
-    labelDesktopY: -32,
-    anchorDesktop: "end",
-  },
-  {
-    id: "03",
-    name: "Pavia",
-    x: 306,
-    y: 226,
-    labelDesktopX: -17,
-    labelDesktopY: 7,
-    anchorDesktop: "end",
-  },
-  {
-    id: "04",
-    name: "Montescano",
-    x: 320,
-    y: 245,
-    labelDesktopX: 22,
-    labelDesktopY: 24,
-    anchorDesktop: "start",
-  },
-  {
-    id: "05",
-    name: "Telese",
-    x: 607,
-    y: 520,
-    labelDesktopX: -22,
-    labelDesktopY: 10,
-    anchorDesktop: "end",
-  },
-  {
-    id: "06",
-    name: "Bari",
-    x: 746,
-    y: 522,
-    labelDesktopX: 24,
-    labelDesktopY: 8,
-    anchorDesktop: "start",
-  },
-];
+const nodes = italyNetworkNodes.map((node) => ({
+  ...node,
+  x: node.point.x,
+  y: node.point.y,
+}));
 
 const hub = nodes.find((node) => node.name === "Pavia") ?? nodes[0];
 
@@ -76,7 +16,7 @@ export default function ItalyNetworkMap() {
     <div className="mx-auto w-full max-w-[620px]">
       <div className="relative aspect-square w-full">
         <svg
-          viewBox="0 0 1000 1000"
+          viewBox={`0 0 ${MAP_VIEWBOX_SIZE} ${MAP_VIEWBOX_SIZE}`}
           className="absolute inset-0 h-full w-full"
           aria-label="ICS Maugeri tele-neurophysiology sites in Italy"
           role="img"
@@ -91,8 +31,8 @@ export default function ItalyNetworkMap() {
               href="/it.svg"
               x="0"
               y="0"
-              width="1000"
-              height="1000"
+              width={MAP_VIEWBOX_SIZE}
+              height={MAP_VIEWBOX_SIZE}
               preserveAspectRatio="xMidYMid meet"
             />
           </motion.g>

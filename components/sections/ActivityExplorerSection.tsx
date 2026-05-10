@@ -6,20 +6,11 @@ import { useMemo, useState } from "react";
 import Container from "../ui/Container";
 import FadeIn from "../ui/FadeIn";
 import SectionLabel from "../ui/SectionLabel";
+import { activityMapSites, MAP_VIEWBOX_SIZE } from "./networkMapData";
 
 const years = ["2020", "2021", "2022", "2023", "2024", "2025", "2026"] as const;
 
-const sites = [
-  { key: "nervi", label: "Nervi", color: "#1F2F35", x: 244, y: 298, labelX: -18, labelY: 20 },
-  { key: "tradate", label: "Tradate", color: "#2C5D6B", x: 289, y: 185, labelX: 18, labelY: 6 },
-  { key: "sciacca", label: "Sciacca", color: "#7A8E95", x: 388, y: 845, labelX: -16, labelY: 22 },
-  { key: "veruno", label: "Veruno", color: "#6FA9B8", x: 323, y: 206, labelX: 14, labelY: -22 },
-  { key: "bari", label: "Bari", color: "#377082", x: 746, y: 522, labelX: 18, labelY: 12 },
-  { key: "montescano", label: "Montescano", color: "#4A8FA3", x: 320, y: 245, labelX: 18, labelY: 18 },
-  { key: "pavia", label: "Pavia", color: "#D9E5E8", x: 306, y: 226, labelX: 16, labelY: 8 },
-  { key: "torino", label: "Torino", color: "#A9BBC0", x: 212, y: 218, labelX: -36, labelY: 14 },
-  { key: "telese", label: "Telese", color: "#88B7A5", x: 607, y: 520, labelX: -18, labelY: 18 },
-] as const;
+const sites = activityMapSites;
 
 type Year = (typeof years)[number];
 type SiteKey = (typeof sites)[number]["key"];
@@ -325,7 +316,10 @@ export default function ActivityExplorerSection() {
                             ease: [0.22, 1, 0.36, 1],
                           }}
                           className="absolute -translate-x-1/2 -translate-y-1/2 text-left"
-                          style={{ left: `${site.x / 10}%`, top: `${site.y / 10}%` }}
+                          style={{
+                            left: `${(site.point.x / MAP_VIEWBOX_SIZE) * 100}%`,
+                            top: `${(site.point.y / MAP_VIEWBOX_SIZE) * 100}%`,
+                          }}
                           aria-label={`${site.label}: ${formatNumber(pointValue)}`}
                         >
                           <span

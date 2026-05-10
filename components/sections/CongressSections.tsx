@@ -76,6 +76,24 @@ const timeline = [
   },
 ];
 
+const conclusionSteps = [
+  {
+    title: "Multicenter feasibility",
+    text: "Feasible in a multicenter rehabilitation system.",
+    icon: "M10 42h44M14 22h36M18 30h28",
+  },
+  {
+    title: "Specialist access",
+    text: "Improves access to specialist neurophysiology.",
+    icon: "M13 46h38V18H13zM22 28h20M22 36h14",
+  },
+  {
+    title: "Governance",
+    text: "Requires procedures, training and clear governance.",
+    icon: "M32 10l18 8v12c0 11-7 18-18 24-11-6-18-13-18-24V18z",
+  },
+] as const;
+
 function WorkflowIcon({ path }: { path: string }) {
   return (
     <svg
@@ -369,15 +387,32 @@ export default function CongressSections() {
           </FadeIn>
 
           <div className="mt-10 grid gap-7 border-t border-white/15 pt-7 md:mt-16 md:grid-cols-3 md:gap-10 md:pt-8 lg:mt-24">
-            {[
-              "Feasible in a multicenter rehabilitation system.",
-              "Improves access to specialist neurophysiology.",
-              "Requires procedures, training and clear governance.",
-            ].map((item, index) => (
-              <FadeIn key={item} delay={index * 0.08}>
-                <p className="text-[17px] font-light leading-[1.65] text-[#EAF3F5] md:text-[22px]">
-                  {item}
-                </p>
+            {conclusionSteps.map((step, index) => (
+              <FadeIn key={step.title} delay={index * 0.08}>
+                <div className="h-full rounded-sm border border-white/15 bg-white/[0.03] p-5 md:p-6">
+                  <svg
+                    viewBox="0 0 64 64"
+                    className="h-9 w-9 text-[#6FA9B8] md:h-10 md:w-10"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d={step.icon}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+
+                  <p className="mt-5 text-[10px] uppercase tracking-[0.18em] text-[#A9BBC0]">
+                    {step.title}
+                  </p>
+
+                  <p className="mt-4 text-[17px] font-light leading-[1.65] text-[#EAF3F5] md:text-[22px]">
+                    {step.text}
+                  </p>
+                </div>
               </FadeIn>
             ))}
           </div>
