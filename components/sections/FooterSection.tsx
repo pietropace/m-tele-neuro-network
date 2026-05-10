@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Container from "../ui/Container";
 import FadeIn from "../ui/FadeIn";
@@ -9,32 +9,114 @@ type ContactState = {
   name: string;
   email: string;
   message: string;
+  company: string;
 };
 
 const initialContactState: ContactState = {
   name: "",
   email: "",
   message: "",
+  company: "",
 };
 
 export default function FooterSection() {
   const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(126);
+  const [likes, setLikes] = useState<number | null>(null);
+  const [contactsCount, setContactsCount] = useState<number | null>(null);
   const [form, setForm] = useState<ContactState>(initialContactState);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitState, setSubmitState] = useState<"idle" | "loading" | "success" | "error">("idle");
 
-  function handleLike() {
-    setLiked((current) => {
-      const next = !current;
-      setLikes((value) => value + (next ? 1 : -1));
-      return next;
-    });
+  useEffect(() => {
+    const wasLiked = window.localStorage.getItem("maugeri-footer-liked") === "1";
+    setLiked(wasLiked);
+
+    let ignore = false;
+
+    async function loadStats() {
+      try {
+        const response = await fetch("/api/stats", { cache: "no-store" });
+        if (!response.ok) {
+          return;
+        }
+
+        const data = (await response.json()) as {
+          stats?: { likes?: number; contacts?: number };
+        };
+
+        if (!ignore) {
+          setLikes(data.stats?.likes ?? 126);
+          setContactsCount(data.stats?.contacts ?? 0);
+        }
+      } catch {
+        if (!ignore) {
+          setLikes(126);
+          setContactsCount(0);
+        }
+      }
+    }
+
+    void loadStats();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  async function handleLike() {
+    if (liked) {
+      return;
+    }
+
+    setLiked(true);
+    window.localStorage.setItem("maugeri-footer-liked", "1");
+
+    try {
+      const response = await fetch("/api/like", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Like save failed");
+      }
+
+      const data = (await response.json()) as {
+        stats?: { likes?: number };
+      };
+
+      setLikes(data.stats?.likes ?? 126);
+    } catch {
+      // Keep optimistic UI even if telemetry write fails.
+      setLikes((value) => (value ?? 126) + 1);
+    }
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted(true);
-    setForm(initialContactState);
+    setSubmitState("loading");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.ok) {
+        throw new Error("Contact save failed");
+      }
+
+      const data = (await response.json()) as {
+        stats?: { contacts?: number };
+      };
+
+      setForm(initialContactState);
+      setSubmitState("success");
+      setContactsCount(data.stats?.contacts ?? contactsCount ?? 0);
+    } catch {
+      setSubmitState("error");
+    }
   }
 
   return (
@@ -63,6 +145,7 @@ export default function FooterSection() {
                 animate={liked ? { scale: [1, 1.08, 1] } : { scale: 1 }}
                 transition={{ duration: 0.35 }}
                 aria-pressed={liked}
+                disabled={liked}
                 className={`inline-flex min-h-11 items-center gap-3 border px-4 py-2 text-[11px] uppercase tracking-[0.2em] transition-colors ${
                   liked
                     ? "border-[#88B7A5] bg-[#88B7A5]/10 text-[#F5F7F8]"
@@ -70,8 +153,12 @@ export default function FooterSection() {
                 }`}
               >
                 <span>{liked ? "Grazie" : "Like"}</span>
-                <span className="font-serif text-[1.4rem] leading-none">{likes}</span>
+                <span className="font-serif text-[1.4rem] leading-none">{likes ?? 126}</span>
               </motion.button>
+
+              <p className="mt-4 text-[10px] uppercase tracking-[0.16em] text-[#A9BBC0]">
+                Like registrati: {likes ?? 126} · Contatti ricevuti: {contactsCount ?? 0}
+              </p>
             </div>
           </FadeIn>
 
@@ -82,6 +169,17 @@ export default function FooterSection() {
               </p>
 
               <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+                <input
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={form.company}
+                  onChange={(event) =>
+                    setForm((current) => ({ ...current, company: event.target.value }))
+                  }
+                  className="hidden"
+                  aria-hidden="true"
+                />
+
                 <input
                   required
                   value={form.name}
@@ -117,18 +215,27 @@ export default function FooterSection() {
                 <motion.button
                   type="submit"
                   whileTap={{ scale: 0.97 }}
+                  disabled={submitState === "loading"}
                   className="w-full border border-[#88B7A5] bg-[#88B7A5]/10 px-4 py-3 text-[11px] uppercase tracking-[0.2em] text-[#F5F7F8]"
                 >
-                  Invia messaggio
+                  {submitState === "loading" ? "Invio in corso..." : "Invia messaggio"}
                 </motion.button>
               </form>
 
               <motion.p
                 initial={{ opacity: 0, y: 6 }}
-                animate={submitted ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+                animate={submitState === "success" ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
                 className="mt-3 text-[11px] uppercase tracking-[0.16em] text-[#88B7A5]"
               >
                 Messaggio ricevuto. Grazie.
+              </motion.p>
+
+              <motion.p
+                initial={{ opacity: 0, y: 6 }}
+                animate={submitState === "error" ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+                className="mt-2 text-[11px] uppercase tracking-[0.16em] text-[#E8B4B4]"
+              >
+                Invio non riuscito. Riprova tra poco.
               </motion.p>
             </div>
           </FadeIn>
