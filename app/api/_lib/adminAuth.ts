@@ -8,7 +8,13 @@ export async function requireAdmin() {
     redirect("/login");
   }
 
-  const user = await (await clerkClient()).users.getUser(userId);
+  let user;
+
+  try {
+    user = await (await clerkClient()).users.getUser(userId);
+  } catch {
+    redirect("/");
+  }
 
   if (user.publicMetadata.role !== "admin") {
     redirect("/");
