@@ -42,3 +42,6 @@ next-env.d.ts
 
 # local contact submissions
 /app/.contact-data/
+
+# clerk configuration (can include secrets)
+/.clerk/

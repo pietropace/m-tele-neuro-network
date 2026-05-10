@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
@@ -25,12 +26,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.variable} ${instrument.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <ClerkProvider
+      signInUrl="/login"
+      signInFallbackRedirectUrl="/admin"
+      afterSignOutUrl="/login"
+      appearance={{
+        variables: {
+          colorPrimary: "#2C5D6B",
+          colorText: "#1F2F35",
+          colorTextSecondary: "#7A8E95",
+          colorBackground: "#FFFFFF",
+          borderRadius: "0.25rem",
+          fontFamily: "var(--font-sans)",
+        },
+      }}
+    >
+      <html lang="en">
+        <body className={`${inter.variable} ${instrument.variable} antialiased`}>
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
