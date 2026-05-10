@@ -4,7 +4,21 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Container from "../ui/Container";
 
-export default function Hero() {
+type HeroContent = {
+  heroEyebrow?: string | null;
+  heroTitleLineOne?: string | null;
+  heroTitleLineTwo?: string | null;
+  heroSubtitle?: string | null;
+};
+
+export default function Hero({ content }: { content?: HeroContent | null }) {
+  const eyebrow = content?.heroEyebrow ?? "Tele-neurophysiology Network";
+  const titleLineOne = content?.heroTitleLineOne ?? "Tele-neurophysiology";
+  const titleLineTwo = content?.heroTitleLineTwo ?? "reporting network";
+  const subtitle =
+    content?.heroSubtitle ??
+    "A multicenter clinical infrastructure enabling remote neurophysiology reporting, continuity of specialist activity and workload redistribution across Italy.";
+
   return (
     <section className="relative flex min-h-[100svh] items-start overflow-hidden bg-[#F5F7F8] py-8 md:py-14 lg:py-20">
       <div className="absolute inset-0 bg-cover bg-[position:68%_center] opacity-45 md:bg-right" style={{ backgroundImage: "url('/hero_home.png')" }} />
@@ -47,27 +61,25 @@ export default function Hero() {
                 </div>
 
                 <span className="hidden pt-4 text-right text-[11px] uppercase tracking-[0.38em] text-[#377082] md:block">
-                  Tele-neurophysiology Network
+                  {eyebrow}
                 </span>
               </div>
 
               <span className="text-[10px] uppercase tracking-[0.28em] text-[#377082] md:hidden">
-                Tele-neurophysiology Network
+                {eyebrow}
               </span>
             </div>
 
             <h1 className="max-w-[980px] font-serif text-[3.1rem] leading-[0.9] tracking-[-0.035em] min-[380px]:text-[3.6rem] md:text-[6.2rem] lg:text-[8.1rem]">
-              <span className="text-[#1F2F35]">Tele-neurophysiology</span>
+              <span className="text-[#1F2F35]">{titleLineOne}</span>
               <br />
-              <span className="text-[#2C5D6B]">reporting network</span>
+              <span className="text-[#2C5D6B]">{titleLineTwo}</span>
             </h1>
 
             <div className="mt-10 grid items-end gap-10 md:mt-12 lg:grid-cols-12 lg:gap-16">
               <div className="lg:col-span-7">
                 <p className="max-w-2xl text-[1.1rem] font-light leading-[1.8] text-[#4F5E64] md:text-[1.45rem] md:leading-[1.9]">
-                  A multicenter clinical infrastructure enabling remote
-                  neurophysiology reporting, continuity of specialist
-                  activity and workload redistribution across Italy.
+                  {subtitle}
                 </p>
               </div>
 

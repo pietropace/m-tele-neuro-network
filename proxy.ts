@@ -7,7 +7,7 @@ type SessionClaimsWithRole = {
   publicMetadata?: { role?: string };
 };
 
-const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+const isAdminRoute = createRouteMatcher(["/admin(.*)", "/studio(.*)"]);
 const isLoginRoute = createRouteMatcher(["/login(.*)"]);
 
 async function getSiteAccessMode(): Promise<SiteAccessMode> {
