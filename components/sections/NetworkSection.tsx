@@ -10,7 +10,7 @@ export default function NetworkSection() {
     <section className="relative overflow-hidden bg-white py-16 md:py-32 lg:py-40">
       <Container>
         <div className="grid gap-12 md:gap-16 lg:grid-cols-12 lg:gap-24 lg:items-center">
-          <div className="lg:col-span-5">
+          <div className="order-2 lg:order-none lg:col-span-5">
             <FadeIn>
               <SectionLabel>
                 Multicenter Infrastructure
@@ -55,7 +55,7 @@ export default function NetworkSection() {
             </FadeIn>
           </div>
 
-          <div className="lg:col-span-7">
+          <div className="order-1 lg:order-none lg:col-span-7">
             <FadeIn delay={0.2}>
               <ItalyNetworkMap />
             </FadeIn>

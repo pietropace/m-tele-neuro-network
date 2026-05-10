@@ -21,12 +21,7 @@ export default function ItalyNetworkMap() {
           aria-label="ICS Maugeri tele-neurophysiology sites in Italy"
           role="img"
         >
-          <motion.g
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 0.17 }}
-            viewport={{ once: true, margin: "-12%" }}
-            transition={{ duration: 1.6 }}
-          >
+          <g opacity="0.18">
             <image
               href="/it.svg"
               x="0"
@@ -35,7 +30,7 @@ export default function ItalyNetworkMap() {
               height={MAP_VIEWBOX_SIZE}
               preserveAspectRatio="xMidYMid meet"
             />
-          </motion.g>
+          </g>
 
           {nodes
             .filter((node) => node.name !== hub.name)
