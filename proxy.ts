@@ -2,6 +2,10 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { get } from "@vercel/edge-config";
 
 type SiteAccessMode = "public" | "private";
+type SessionClaimsWithRole = {
+  metadata?: { role?: string };
+  publicMetadata?: { role?: string };
+};
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 const isLoginRoute = createRouteMatcher(["/login(.*)"]);
@@ -20,7 +24,13 @@ export default clerkMiddleware(async (auth, req) => {
   const shouldProtect = isAdminRoute(req) || (mode === "private" && !isLoginRoute(req));
 
   if (shouldProtect) {
-    await auth.protect();
+    const session = await auth.protect();
+    const claims = session.sessionClaims as SessionClaimsWithRole;
+    const role = claims.metadata?.role ?? claims.publicMetadata?.role;
+
+    if (isAdminRoute(req) && role !== "admin") {
+      return Response.redirect(new URL("/", req.url));
+    }
   }
 }, {
   signInUrl: "/login",

@@ -6,9 +6,19 @@ import { redirect } from "next/navigation";
 import { setSiteAccessMode, type SiteAccessMode } from "../../api/_lib/siteAccessStore";
 
 export async function updateSiteAccessMode(formData: FormData) {
-  const { userId } = await auth();
+  const { sessionClaims, userId } = await auth();
   if (!userId) {
     redirect("/login");
+  }
+
+  const claims = sessionClaims as {
+    metadata?: { role?: string };
+    publicMetadata?: { role?: string };
+  };
+  const role = claims.metadata?.role ?? claims.publicMetadata?.role;
+
+  if (role !== "admin") {
+    redirect("/");
   }
 
   const mode = formData.get("mode");
