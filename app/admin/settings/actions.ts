@@ -1,22 +1,18 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { setSiteAccessMode, type SiteAccessMode } from "../../api/_lib/siteAccessStore";
 
 export async function updateSiteAccessMode(formData: FormData) {
-  const { sessionClaims, userId } = await auth();
+  const { userId } = await auth();
   if (!userId) {
     redirect("/login");
   }
 
-  const claims = sessionClaims as {
-    metadata?: { role?: string };
-    publicMetadata?: { role?: string };
-    public_metadata?: { role?: string };
-  };
-  const role = claims.metadata?.role ?? claims.publicMetadata?.role ?? claims.public_metadata?.role;
+  const user = await (await clerkClient()).users.getUser(userId);
+  const role = user.publicMetadata.role;
 
   if (role !== "admin") {
     redirect("/");
