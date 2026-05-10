@@ -15,10 +15,8 @@ type ContactRecord = {
   message: string;
 };
 
-const DATA_DIR = path.join(process.cwd(), "app", ".contact-data");
-const CONTACT_CSV_PATH = path.join(DATA_DIR, "requests.csv");
-const LIKE_CSV_PATH = path.join(DATA_DIR, "likes.csv");
-const STATS_JSON_PATH = path.join(DATA_DIR, "stats.json");
+const LOCAL_DATA_DIR = path.join(process.cwd(), "app", ".contact-data");
+const VERCEL_DATA_DIR = path.join("/tmp", "m-tele-neuro-network", "contact-data");
 
 const DEFAULT_STATS: Stats = {
   likes: 126,
@@ -27,12 +25,35 @@ const DEFAULT_STATS: Stats = {
   lastContactAt: null,
 };
 
+let resolvedDataDir: string | null = null;
+
 function escapeCsv(value: string) {
   return `"${value.replace(/"/g, '""').replace(/[\r\n]+/g, " ").trim()}"`;
 }
 
-async function ensureDataDirectory() {
-  await mkdir(DATA_DIR, { recursive: true });
+async function resolveDataDir() {
+  if (resolvedDataDir) {
+    return resolvedDataDir;
+  }
+
+  const preferredDir = process.env.VERCEL ? VERCEL_DATA_DIR : LOCAL_DATA_DIR;
+  const fallbackDir = process.env.VERCEL ? LOCAL_DATA_DIR : VERCEL_DATA_DIR;
+
+  for (const candidate of [preferredDir, fallbackDir]) {
+    try {
+      await mkdir(candidate, { recursive: true });
+      resolvedDataDir = candidate;
+      return candidate;
+    } catch {
+      // Try the alternate writable location.
+    }
+  }
+
+  throw new Error("Unable to resolve writable telemetry directory");
+}
+
+async function getFilePath(fileName: string) {
+  return path.join(await resolveDataDir(), fileName);
 }
 
 async function ensureCsvFile(filePath: string, header: string) {
@@ -44,24 +65,24 @@ async function ensureCsvFile(filePath: string, header: string) {
 }
 
 async function readStatsInternal() {
-  await ensureDataDirectory();
+  const statsJsonPath = await getFilePath("stats.json");
 
   try {
-    const content = await readFile(STATS_JSON_PATH, "utf8");
+    const content = await readFile(statsJsonPath, "utf8");
     const parsed = JSON.parse(content) as Partial<Stats>;
     return {
       ...DEFAULT_STATS,
       ...parsed,
     } satisfies Stats;
   } catch {
-    await writeFile(STATS_JSON_PATH, JSON.stringify(DEFAULT_STATS, null, 2), "utf8");
+    await writeFile(statsJsonPath, JSON.stringify(DEFAULT_STATS, null, 2), "utf8");
     return DEFAULT_STATS;
   }
 }
 
 async function writeStats(stats: Stats) {
-  await ensureDataDirectory();
-  await writeFile(STATS_JSON_PATH, JSON.stringify(stats, null, 2), "utf8");
+  const statsJsonPath = await getFilePath("stats.json");
+  await writeFile(statsJsonPath, JSON.stringify(stats, null, 2), "utf8");
 }
 
 async function archiveToPrivateGitHub(eventType: "contact" | "like", payload: Record<string, string | number | null>) {
@@ -118,15 +139,15 @@ async function archiveToPrivateGitHub(eventType: "contact" | "like", payload: Re
 }
 
 export async function recordContact(record: ContactRecord) {
-  await ensureDataDirectory();
-  await ensureCsvFile(CONTACT_CSV_PATH, "timestamp,name,email,message");
+  const contactCsvPath = await getFilePath("requests.csv");
+  await ensureCsvFile(contactCsvPath, "timestamp,name,email,message");
 
   const timestamp = new Date().toISOString();
   const row = [timestamp, record.name, record.email, record.message]
     .map(escapeCsv)
     .join(",");
 
-  await appendFile(CONTACT_CSV_PATH, `${row}\n`, "utf8");
+  await appendFile(contactCsvPath, `${row}\n`, "utf8");
 
   const stats = await readStatsInternal();
   const nextStats: Stats = {
@@ -147,11 +168,11 @@ export async function recordContact(record: ContactRecord) {
 }
 
 export async function recordLike() {
-  await ensureDataDirectory();
-  await ensureCsvFile(LIKE_CSV_PATH, "timestamp,source");
+  const likeCsvPath = await getFilePath("likes.csv");
+  await ensureCsvFile(likeCsvPath, "timestamp,source");
 
   const timestamp = new Date().toISOString();
-  await appendFile(LIKE_CSV_PATH, `${escapeCsv(timestamp)},${escapeCsv("footer")}\n`, "utf8");
+  await appendFile(likeCsvPath, `${escapeCsv(timestamp)},${escapeCsv("footer")}\n`, "utf8");
 
   const stats = await readStatsInternal();
   const nextStats: Stats = {
