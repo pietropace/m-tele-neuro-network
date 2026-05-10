@@ -79,7 +79,7 @@ export default function Hero() {
                     </div>
 
                     <div className="mt-3 text-[3.45rem] font-light leading-none tracking-[-0.05em] text-[#1F2F35] sm:mt-4 sm:text-[4rem] md:text-[4.35rem]">
-                      1048
+                      1264
                     </div>
                   </div>
 
@@ -89,7 +89,7 @@ export default function Hero() {
                     </div>
 
                     <div className="mt-3 text-[2.15rem] font-light leading-none tracking-[-0.04em] text-[#1F2F35] sm:mt-4 sm:text-[2.45rem] md:text-[2.6rem]">
-                      2018→2025
+                      2020→2026
                     </div>
                   </div>
                 </div>

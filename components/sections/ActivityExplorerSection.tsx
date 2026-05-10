@@ -10,15 +10,15 @@ import SectionLabel from "../ui/SectionLabel";
 const years = ["2020", "2021", "2022", "2023", "2024", "2025", "2026"] as const;
 
 const sites = [
-  { key: "nervi", label: "Nervi", color: "#1F2F35", x: 30, y: 36, labelX: 0, labelY: 13 },
-  { key: "tradate", label: "Tradate", color: "#2C5D6B", x: 35, y: 22.5, labelX: 11, labelY: 2 },
-  { key: "sciacca", label: "Sciacca", color: "#7A8E95", x: 41, y: 84, labelX: 12, labelY: 2 },
-  { key: "veruno", label: "Veruno", color: "#6FA9B8", x: 37, y: 20.5, labelX: 11, labelY: -8 },
-  { key: "bari", label: "Bari", color: "#377082", x: 67, y: 58.5, labelX: 10, labelY: 11 },
-  { key: "montescano", label: "Montescano", color: "#4A8FA3", x: 38, y: 31, labelX: 13, labelY: 8 },
-  { key: "pavia", label: "Pavia", color: "#D9E5E8", x: 36.5, y: 28.5, labelX: 10, labelY: 7 },
-  { key: "torino", label: "Torino", color: "#A9BBC0", x: 24, y: 25, labelX: 8, labelY: 9 },
-  { key: "telese", label: "Telese", color: "#88B7A5", x: 48, y: 52.5, labelX: 10, labelY: 10 },
+  { key: "nervi", label: "Nervi", color: "#1F2F35", x: 244, y: 298, labelX: -18, labelY: 20 },
+  { key: "tradate", label: "Tradate", color: "#2C5D6B", x: 289, y: 185, labelX: 18, labelY: 6 },
+  { key: "sciacca", label: "Sciacca", color: "#7A8E95", x: 388, y: 845, labelX: -16, labelY: 22 },
+  { key: "veruno", label: "Veruno", color: "#6FA9B8", x: 323, y: 206, labelX: 14, labelY: -22 },
+  { key: "bari", label: "Bari", color: "#377082", x: 746, y: 522, labelX: 18, labelY: 12 },
+  { key: "montescano", label: "Montescano", color: "#4A8FA3", x: 320, y: 245, labelX: 18, labelY: 18 },
+  { key: "pavia", label: "Pavia", color: "#D9E5E8", x: 306, y: 226, labelX: 16, labelY: 8 },
+  { key: "torino", label: "Torino", color: "#A9BBC0", x: 212, y: 218, labelX: -36, labelY: 14 },
+  { key: "telese", label: "Telese", color: "#88B7A5", x: 607, y: 520, labelX: -18, labelY: 18 },
 ] as const;
 
 type Year = (typeof years)[number];
@@ -279,7 +279,7 @@ export default function ActivityExplorerSection() {
               </div>
 
               <div className="absolute inset-x-4 bottom-28 top-18 flex items-center justify-center md:inset-x-7 md:bottom-28 md:top-20">
-                <div className="relative aspect-[0.72/1] h-full max-h-[370px] w-full max-w-[270px] md:max-h-[430px] md:max-w-[310px]">
+                <div className="relative aspect-square h-full max-h-[370px] w-full max-w-[310px] md:max-h-[430px] md:max-w-[360px]">
                   <Image
                     src="/it.svg"
                     alt=""
@@ -325,7 +325,7 @@ export default function ActivityExplorerSection() {
                             ease: [0.22, 1, 0.36, 1],
                           }}
                           className="absolute -translate-x-1/2 -translate-y-1/2 text-left"
-                          style={{ left: `${site.x}%`, top: `${site.y}%` }}
+                          style={{ left: `${site.x / 10}%`, top: `${site.y / 10}%` }}
                           aria-label={`${site.label}: ${formatNumber(pointValue)}`}
                         >
                           <span
@@ -341,8 +341,9 @@ export default function ActivityExplorerSection() {
                               isSelected || mode === "year" ? "opacity-100" : "opacity-0 md:opacity-100"
                             }`}
                             style={{
-                              left: `${site.labelX}%`,
-                              top: `${site.labelY}%`,
+                              left: 0,
+                              top: 0,
+                              transform: `translate(${site.labelX}px, ${site.labelY}px)`,
                             }}
                           >
                             {site.label}

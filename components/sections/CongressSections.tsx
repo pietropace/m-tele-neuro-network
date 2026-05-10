@@ -249,7 +249,7 @@ export default function CongressSections() {
             <FadeIn className="lg:col-span-7">
               <SectionLabel>Results</SectionLabel>
               <p className="font-serif text-[5.25rem] leading-[0.82] text-[#1F2F35] min-[380px]:text-[6rem] sm:text-[7rem] md:text-[13rem] lg:text-[17rem]">
-                1,048
+                1,264
               </p>
               <h2 className="mt-6 max-w-3xl font-serif text-[2.35rem] leading-[1.02] text-[#1F2F35] min-[380px]:text-[2.65rem] md:mt-8 md:text-[5rem]">
                 examinations managed remotely through the network.
@@ -262,7 +262,7 @@ export default function CongressSections() {
                   <div className="grid grid-cols-2 gap-8">
                     <div>
                       <p className="font-serif text-[3.4rem] leading-none text-[#1F2F35] md:text-[4rem]">
-                        8
+                        7
                       </p>
                       <p className="mt-3 text-[11px] uppercase leading-relaxed tracking-[0.22em] text-[#7A8E95]">
                         Years
@@ -270,10 +270,10 @@ export default function CongressSections() {
                     </div>
                     <div>
                       <p className="font-serif text-[3.4rem] leading-none text-[#1F2F35] md:text-[4rem]">
-                        6
+                        9
                       </p>
                       <p className="mt-3 text-[11px] uppercase leading-relaxed tracking-[0.22em] text-[#7A8E95]">
-                        ICS sites
+                        Institutes
                       </p>
                     </div>
                   </div>
