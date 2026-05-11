@@ -5,7 +5,12 @@ type SiteAccessMode = "public" | "private";
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)", "/studio(.*)"]);
 const isLoginRoute = createRouteMatcher(["/login(.*)"]);
-const isPublicApiRoute = createRouteMatcher(["/api/like", "/api/stats", "/api/contact"]);
+const isPublicApiRoute = createRouteMatcher([
+  "/api/like",
+  "/api/stats",
+  "/api/contact",
+  "/api/observatory-agent",
+]);
 
 async function getSiteAccessMode(): Promise<SiteAccessMode> {
   try {

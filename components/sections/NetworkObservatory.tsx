@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, Activity, Map, Radio, Signal } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import ObservatoryAssistant from "../ui/ObservatoryAssistant";
 import { activityMapSites, MAP_VIEWBOX_SIZE } from "./networkMapData";
 
 const years = ["2020", "2021", "2022", "2023", "2024", "2025", "2026"] as const;
@@ -69,6 +70,7 @@ export default function NetworkObservatory() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#061215] text-white">
+      <ObservatoryAssistant />
       <div className="fixed inset-0 opacity-30">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_68%_28%,rgba(111,169,184,0.26),transparent_34%),radial-gradient(circle_at_18%_72%,rgba(136,183,165,0.16),transparent_34%)]" />
         <div className="absolute inset-0 editorial-grid opacity-30" />
