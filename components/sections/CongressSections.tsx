@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 import ActivityExplorerSection from "./ActivityExplorerSection";
 import Container from "../ui/Container";
 import FadeIn from "../ui/FadeIn";
@@ -114,8 +115,15 @@ function WorkflowIcon({ path }: { path: string }) {
 }
 
 function Waveform({ path, delay }: { path: string; delay: number }) {
+  const ref = useRef<SVGSVGElement>(null);
+  const isInView = useInView(ref, {
+    amount: 0.35,
+    margin: "0px 0px -80px 0px",
+    once: false,
+  });
+
   return (
-    <svg viewBox="0 0 180 110" className="h-24 w-full md:h-32" aria-hidden="true">
+    <svg ref={ref} viewBox="0 0 180 110" className="h-24 w-full md:h-32" aria-hidden="true">
       <path
         d="M0 56H180"
         stroke="#D9E5E8"
@@ -133,11 +141,7 @@ function Waveform({ path, delay }: { path: string; delay: number }) {
           pathLength: 0,
           opacity: 0,
         }}
-        whileInView={{
-          pathLength: 1,
-          opacity: 1,
-        }}
-        viewport={{ once: true, margin: "0px 0px -80px 0px" }}
+        animate={isInView ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
         transition={{
           duration: 2.4,
           delay,
