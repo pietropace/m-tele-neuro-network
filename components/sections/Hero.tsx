@@ -18,6 +18,10 @@ export default function Hero({ content }: { content?: HeroContent | null }) {
   const eyebrow = rawEyebrow.toLowerCase().includes(titleLineOne.toLowerCase())
     ? "ICS Maugeri Network"
     : rawEyebrow;
+  const safeTitleLineTwo =
+    titleLineTwo.trim().toLowerCase() === titleLineOne.trim().toLowerCase()
+      ? "reporting network"
+      : titleLineTwo;
   const subtitle =
     content?.heroSubtitle ??
     "A multicenter clinical infrastructure enabling remote neurophysiology reporting, continuity of specialist activity and workload redistribution across Italy.";
@@ -76,7 +80,7 @@ export default function Hero({ content }: { content?: HeroContent | null }) {
             <h1 className="max-w-[980px] font-serif text-[3.1rem] leading-[0.9] tracking-[-0.035em] min-[380px]:text-[3.6rem] md:text-[6.2rem] lg:text-[8.1rem]">
               <span className="text-[#1F2F35]">{titleLineOne}</span>
               <br />
-              <span className="text-[#2C5D6B]">{titleLineTwo}</span>
+              <span className="text-[#2C5D6B]">{safeTitleLineTwo}</span>
             </h1>
 
             <div className="mt-10 grid items-end gap-10 md:mt-12 lg:grid-cols-12 lg:gap-16">
