@@ -14,6 +14,7 @@ export default function EEGSignalStabilizer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointerActive = useRef(false);
   const drift = useRef(0);
+  const velocity = useRef(0);
   const phase = useRef(0);
   const score = useRef(0);
   const stableFrames = useRef(0);
@@ -49,9 +50,15 @@ export default function EEGSignalStabilizer() {
 
       if (game.running) {
         phase.current += dt * 96;
-        const naturalDrift = Math.sin(timestamp * 0.0007) * 0.42 + Math.sin(timestamp * 0.0019) * 0.22;
-        drift.current += naturalDrift * dt * 26;
-        drift.current += pointerActive.current ? -drift.current * dt * 4.8 : Math.sin(timestamp * 0.0024) * dt * 14;
+        const difficulty = 1 + Math.min(score.current / 120, 1.8);
+        const naturalDrift =
+          Math.sin(timestamp * 0.0009) * 42 +
+          Math.sin(timestamp * 0.0021) * 22 +
+          Math.sin(timestamp * 0.0043) * 10;
+        const correction = pointerActive.current ? -Math.sign(drift.current || 1) * 185 : 0;
+        velocity.current += (naturalDrift * difficulty + correction) * dt;
+        velocity.current *= pointerActive.current ? 0.965 : 0.992;
+        drift.current += velocity.current * dt;
         drift.current = Math.max(-height * 0.28, Math.min(height * 0.28, drift.current));
       }
 
@@ -60,7 +67,7 @@ export default function EEGSignalStabilizer() {
       ctx.fillRect(0, 0, width, height);
 
       const center = height * 0.52;
-      const band = height * 0.13;
+      const band = height * 0.075;
       ctx.fillStyle = "rgba(136, 183, 165, 0.07)";
       ctx.fillRect(0, center - band, width, band * 2);
       ctx.strokeStyle = "rgba(136, 183, 165, 0.25)";
@@ -84,8 +91,8 @@ export default function EEGSignalStabilizer() {
       const currentY =
         center +
         drift.current +
-        Math.sin((phase.current + width) * 0.052) * 18 +
-        Math.sin((phase.current + width) * 0.137) * 8;
+        Math.sin((phase.current + width) * 0.052) * 22 +
+        Math.sin((phase.current + width) * 0.137) * 11;
       const inBand = Math.abs(currentY - center) < band;
 
       if (game.running) {
@@ -105,9 +112,9 @@ export default function EEGSignalStabilizer() {
         const signal =
           center +
           drift.current +
-          Math.sin((phase.current + x) * 0.052) * 18 +
-          Math.sin((phase.current + x) * 0.137) * 8 +
-          (x % 97 < 6 ? Math.sin(timestamp * 0.01 + x) * 10 : 0);
+          Math.sin((phase.current + x) * 0.052) * 22 +
+          Math.sin((phase.current + x) * 0.137) * 11 +
+          (x % 97 < 6 ? Math.sin(timestamp * 0.01 + x) * 14 : 0);
         if (x === 0) ctx.moveTo(x, signal);
         else ctx.lineTo(x, signal);
       }
@@ -144,6 +151,7 @@ export default function EEGSignalStabilizer() {
 
   function start() {
     drift.current = 0;
+    velocity.current = 0;
     phase.current = 0;
     score.current = 0;
     stableFrames.current = 0;
