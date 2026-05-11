@@ -31,9 +31,6 @@ export default function ScrollGuide() {
 
       setActiveHref(active);
       setVisible(window.scrollY > 520);
-      if (open && window.scrollY > 80) {
-        setOpen(false);
-      }
     };
 
     update();
@@ -47,13 +44,13 @@ export default function ScrollGuide() {
         type="button"
         aria-label={open ? "Close navigation" : "Open navigation"}
         onClick={() => setOpen((value) => !value)}
-        className="fixed right-4 top-4 z-50 flex h-11 w-11 items-center justify-center border border-[#1F2F35]/10 bg-white/90 text-[#1F2F35] shadow-sm backdrop-blur md:hidden"
+        className="fixed right-4 top-4 z-[100] flex h-11 w-11 items-center justify-center border border-[#1F2F35]/10 bg-white/95 text-[#1F2F35] shadow-sm backdrop-blur md:hidden"
       >
         {open ? <X size={18} /> : <Menu size={18} />}
       </button>
 
       {open && (
-        <nav className="fixed inset-x-4 top-20 z-50 border border-[#1F2F35]/10 bg-white/95 p-4 shadow-lg backdrop-blur md:hidden">
+        <nav className="fixed inset-x-4 top-20 z-[100] border border-[#1F2F35]/10 bg-white/95 p-4 shadow-lg backdrop-blur md:hidden">
           <div className="grid gap-px bg-[#1F2F35]/10">
             {links.map((link) => (
               <a
