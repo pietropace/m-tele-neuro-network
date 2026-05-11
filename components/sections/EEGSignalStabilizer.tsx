@@ -138,6 +138,16 @@ export default function EEGSignalStabilizer() {
       frame += 1;
       if (frame % 12 === 0) {
         const stability = Math.min(100, Math.round((stableFrames.current / 90) * 100));
+
+        setGame((current) => ({
+          ...current,
+          score: Math.round(score.current),
+          stability,
+        }));
+      }
+
+      if (game.running && frame % 150 === 0) {
+        const stability = Math.min(100, Math.round((stableFrames.current / 90) * 100));
         const stableFeedback = [
           "Good control. Keep it smooth.",
           "Nice stabilization.",
@@ -150,19 +160,10 @@ export default function EEGSignalStabilizer() {
           "Signal leaving the window.",
           "Ease into the correction.",
         ];
-        const idleFeedback = [
-          "Small inputs work best.",
-          "Hold briefly, then release.",
-          "Avoid overcorrection.",
-          "Find the rhythm of the trace.",
-        ];
-        const source = !game.running ? idleFeedback : stability > 70 ? stableFeedback : warningFeedback;
+        const source = stability > 70 ? stableFeedback : warningFeedback;
         feedbackIndex.current = (feedbackIndex.current + 1) % source.length;
-
         setGame((current) => ({
           ...current,
-          score: Math.round(score.current),
-          stability,
           feedback: source[feedbackIndex.current],
         }));
       }
