@@ -12,9 +12,12 @@ type HeroContent = {
 };
 
 export default function Hero({ content }: { content?: HeroContent | null }) {
-  const eyebrow = content?.heroEyebrow ?? "Tele-neurophysiology Network";
   const titleLineOne = content?.heroTitleLineOne ?? "Tele-neurophysiology";
   const titleLineTwo = content?.heroTitleLineTwo ?? "reporting network";
+  const rawEyebrow = content?.heroEyebrow ?? "ICS Maugeri Network";
+  const eyebrow = rawEyebrow.toLowerCase().includes(titleLineOne.toLowerCase())
+    ? "ICS Maugeri Network"
+    : rawEyebrow;
   const subtitle =
     content?.heroSubtitle ??
     "A multicenter clinical infrastructure enabling remote neurophysiology reporting, continuity of specialist activity and workload redistribution across Italy.";

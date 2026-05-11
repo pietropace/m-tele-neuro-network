@@ -380,10 +380,7 @@ export default function CongressSections() {
               Conclusions
             </p>
             <h2 className="mt-8 max-w-6xl font-serif text-[2.45rem] leading-[0.98] tracking-normal text-white min-[380px]:text-[2.75rem] sm:text-[4rem] md:mt-10 md:text-[7rem] lg:text-[9rem]">
-              Standard-
-              <br className="sm:hidden" />
-              ization is the infrastructure of scalable
-              neurophysiology.
+              Standardization is the infrastructure of scalable neurophysiology.
             </h2>
           </FadeIn>
 
