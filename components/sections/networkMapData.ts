@@ -14,7 +14,7 @@ export const sharedMapPoints = {
   bari: { x: 746, y: 522 },
   torino: { x: 212, y: 218 },
   nervi: { x: 244, y: 298 },
-  sciacca: { x: 314, y: 746 },
+  sciacca: { x: 455, y: 738 },
   tradate: { x: 289, y: 185 },
 } satisfies Record<string, SharedMapPoint>;
 
