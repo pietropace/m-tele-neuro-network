@@ -21,7 +21,7 @@ const DIFFICULTIES: Record<
 > = {
   training: {
     label: "Training",
-    duration: 60,
+    duration: 20,
     drift: 0.72,
     correction: 155,
     scoreRate: 8,
@@ -31,7 +31,7 @@ const DIFFICULTIES: Record<
   },
   clinical: {
     label: "Clinical",
-    duration: 45,
+    duration: 20,
     drift: 1,
     correction: 185,
     scoreRate: 10,
@@ -41,7 +41,7 @@ const DIFFICULTIES: Record<
   },
   expert: {
     label: "Expert",
-    duration: 35,
+    duration: 20,
     drift: 1.38,
     correction: 205,
     scoreRate: 13,
