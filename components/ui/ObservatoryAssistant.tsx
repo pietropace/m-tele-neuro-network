@@ -10,9 +10,9 @@ type Message = {
 };
 
 const starters = [
-  "Quale istituto ha più esami?",
-  "Qual è il trend 2020-2026?",
-  "Confronta Bari e Telese.",
+  "Which center has the highest volume?",
+  "What is the 2020-2026 trend?",
+  "Compare Bari and Telese.",
 ];
 
 export default function ObservatoryAssistant() {
@@ -22,7 +22,7 @@ export default function ObservatoryAssistant() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Ciao, posso rispondere sui dati della Network Observatory.",
+      content: "Hi, I can answer questions about the Network Observatory data.",
     },
   ]);
 
@@ -44,9 +44,9 @@ export default function ObservatoryAssistant() {
         body: JSON.stringify({ messages: nextMessages }),
       });
       const data = (await response.json()) as { answer?: string };
-      setMessages([...nextMessages, { role: "assistant", content: data.answer ?? "Non riesco a rispondere ora." }]);
+      setMessages([...nextMessages, { role: "assistant", content: data.answer ?? "I cannot answer right now." }]);
     } catch {
-      setMessages([...nextMessages, { role: "assistant", content: "Errore temporaneo. Riprova tra poco." }]);
+      setMessages([...nextMessages, { role: "assistant", content: "Temporary error. Please try again shortly." }]);
     } finally {
       setLoading(false);
     }
@@ -76,7 +76,7 @@ export default function ObservatoryAssistant() {
         <section className="fixed inset-x-4 bottom-24 z-[90] border border-white/15 bg-[#071417]/95 p-4 text-white shadow-2xl backdrop-blur md:left-5 md:right-auto md:w-[25rem]">
           <div className="border-b border-white/10 pb-3">
             <p className="text-[10px] uppercase tracking-[0.28em] text-[#88B7A5]">Data assistant</p>
-            <p className="mt-2 text-sm leading-6 text-[#C9D9DD]">Assistente dati della Network Observatory.</p>
+            <p className="mt-2 text-sm leading-6 text-[#C9D9DD]">Network Observatory data assistant.</p>
           </div>
 
           <div className="mt-4 max-h-[18rem] space-y-3 overflow-y-auto pr-1">
@@ -110,7 +110,7 @@ export default function ObservatoryAssistant() {
             <input
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="Fai una domanda..."
+              placeholder="Ask a question..."
               className="min-w-0 flex-1 border border-white/10 bg-[#061215] px-3 py-3 text-sm text-white placeholder:text-[#A9BBC0] focus:border-[#88B7A5] focus:outline-none"
             />
             <button

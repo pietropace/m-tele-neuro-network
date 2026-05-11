@@ -47,16 +47,16 @@ function buildFacts(rows: Row[]) {
     .sort((a, b) => b.total - a.total);
 
   return [
-    `Totale esami remoti 2020-2026: ${total}.`,
-    `Totali per anno: ${yearlyTotals.map((item) => `${item.year}: ${item.total}`).join(", ")}.`,
-    `Totali per istituto: ${instituteTotals.map((item) => `${item.institute}: ${item.total}`).join(", ")}.`,
-    `Anno con volume massimo: ${yearlyTotals.sort((a, b) => b.total - a.total)[0].year}.`,
-    `Istituto con volume massimo complessivo: ${instituteTotals[0].institute}.`,
+    `Total remote examinations 2020-2026: ${total}.`,
+    `Yearly totals: ${yearlyTotals.map((item) => `${item.year}: ${item.total}`).join(", ")}.`,
+    `Institute totals: ${instituteTotals.map((item) => `${item.institute}: ${item.total}`).join(", ")}.`,
+    `Highest-volume year: ${yearlyTotals.sort((a, b) => b.total - a.total)[0].year}.`,
+    `Highest cumulative-volume institute: ${instituteTotals[0].institute}.`,
   ].join("\n");
 }
 
 function fallbackAnswer(question: string, facts: string) {
-  return `Posso rispondere sui dati della Network Observatory.\n\n${facts}\n\nDomanda ricevuta: ${question}`;
+  return `I can answer questions about the Network Observatory data.\n\n${facts}\n\nReceived question: ${question}`;
 }
 
 export async function POST(request: Request) {
@@ -94,11 +94,11 @@ export async function POST(request: Request) {
           {
             role: "system",
             content:
-              "Sei l'assistente della pagina Network Observatory. Rispondi in italiano, in modo conciso. Usa solo i dati forniti. Se il dato non è presente, dillo chiaramente.",
+              "You are the assistant for the Network Observatory page. Answer in concise English. Use only the provided data. If a data point is not present, say so clearly.",
           },
           {
             role: "user",
-            content: `DATI GREZZI:\n${data}\n\nFATTI CALCOLATI:\n${facts}`,
+            content: `RAW DATA:\n${data}\n\nCALCULATED FACTS:\n${facts}`,
           },
           ...messages.map((message) => ({
             role: message.role,

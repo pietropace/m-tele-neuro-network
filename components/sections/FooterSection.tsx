@@ -133,16 +133,16 @@ export default function FooterSection() {
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
           <FadeIn className="lg:col-span-5">
             <p className="text-[11px] uppercase tracking-[0.22em] text-[#A9BBC0]">
-              Contatti e feedback
+              Contact and feedback
             </p>
 
             <h2 className="mt-4 max-w-[26rem] font-serif text-[2.3rem] leading-[1.02] text-[#F5F7F8] min-[380px]:text-[2.6rem] md:text-[4rem]">
-              Vuoi lasciare un riscontro rapido sul progetto?
+              Would you like to leave quick feedback on the project?
             </h2>
 
             <p className="mt-5 max-w-[28rem] text-[16px] leading-[1.75] text-[#D9E5E8] md:text-[18px]">
-              Puoi esprimere un feedback sintetico con un like oppure inviare un
-              messaggio attraverso il form contatti essenziale qui sotto.
+              You can leave a quick signal with a like or send a short message
+              through the essential contact form below.
             </p>
 
             <div className="mt-8">
@@ -160,12 +160,12 @@ export default function FooterSection() {
                     : "border-[#7A8E95]/40 text-[#D9E5E8]"
                 }`}
               >
-                <span>{liked ? "Grazie" : "Like"}</span>
+                <span>{liked ? "Thank you" : "Like"}</span>
                 <span className="font-serif text-[1.4rem] leading-none">{likes ?? 0}</span>
               </motion.button>
 
               <p className="mt-4 text-[10px] uppercase tracking-[0.16em] text-[#A9BBC0]">
-                Like registrati: {likes ?? 0} · Contatti ricevuti: {contactsCount ?? 0}
+                Registered likes: {likes ?? 0} · Contact requests: {contactsCount ?? 0}
               </p>
             </div>
           </FadeIn>
@@ -173,7 +173,7 @@ export default function FooterSection() {
           <FadeIn delay={0.08} className="lg:col-span-4">
             <div className="border border-[#7A8E95]/30 bg-[#22353B]/70 p-5 md:p-6">
               <p className="text-[10px] uppercase tracking-[0.18em] text-[#A9BBC0]">
-                Form contatti
+                Contact form
               </p>
 
               <form onSubmit={handleSubmit} className="mt-4 space-y-3">
@@ -194,7 +194,7 @@ export default function FooterSection() {
                   onChange={(event) =>
                     setForm((current) => ({ ...current, name: event.target.value }))
                   }
-                  placeholder="Nome"
+                  placeholder="Name"
                   className="w-full border border-[#7A8E95]/30 bg-[#1F2F35] px-3 py-3 text-[14px] text-[#F5F7F8] placeholder:text-[#A9BBC0]/70 focus:border-[#88B7A5] focus:outline-none"
                 />
 
@@ -216,7 +216,7 @@ export default function FooterSection() {
                   onChange={(event) =>
                     setForm((current) => ({ ...current, message: event.target.value }))
                   }
-                  placeholder="Messaggio"
+                  placeholder="Message"
                   className="w-full resize-none border border-[#7A8E95]/30 bg-[#1F2F35] px-3 py-3 text-[14px] text-[#F5F7F8] placeholder:text-[#A9BBC0]/70 focus:border-[#88B7A5] focus:outline-none"
                 />
 
@@ -226,7 +226,7 @@ export default function FooterSection() {
                   disabled={submitState === "loading"}
                   className="w-full border border-[#88B7A5] bg-[#88B7A5]/10 px-4 py-3 text-[11px] uppercase tracking-[0.2em] text-[#F5F7F8]"
                 >
-                  {submitState === "loading" ? "Invio in corso..." : "Invia messaggio"}
+                  {submitState === "loading" ? "Sending..." : "Send message"}
                 </motion.button>
               </form>
 
@@ -235,7 +235,7 @@ export default function FooterSection() {
                 animate={submitState === "success" ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
                 className="mt-3 text-[11px] uppercase tracking-[0.16em] text-[#88B7A5]"
               >
-                Messaggio ricevuto. Grazie.
+                Message received. Thank you.
               </motion.p>
 
               <motion.p
@@ -243,7 +243,7 @@ export default function FooterSection() {
                 animate={submitState === "error" ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
                 className="mt-2 text-[11px] uppercase tracking-[0.16em] text-[#E8B4B4]"
               >
-                Invio non riuscito. Riprova tra poco.
+                Sending failed. Please try again shortly.
               </motion.p>
             </div>
           </FadeIn>
@@ -251,13 +251,13 @@ export default function FooterSection() {
           <FadeIn delay={0.14} className="lg:col-span-3">
             <div className="border-t border-[#7A8E95]/30 pt-5 text-[13px] leading-[1.75] text-[#D9E5E8] lg:border-t-0 lg:border-l lg:pl-6">
               <p>
-                Istituti Clinici Scientifici Maugeri Spa Società Benefit: sede
-                legale in via Salvatore Maugeri, 4 - 27100, Pavia (PV) - C.F.
-                e P.I. 02631650187
+                Istituti Clinici Scientifici Maugeri Spa Società Benefit:
+                registered office at via Salvatore Maugeri, 4 - 27100, Pavia
+                (PV) - C.F. e P.I. 02631650187
               </p>
 
               <p className="mt-5 text-[10px] uppercase tracking-[0.18em] text-[#A9BBC0]">
-                Email di riferimento
+                Reference email
               </p>
 
               <a
