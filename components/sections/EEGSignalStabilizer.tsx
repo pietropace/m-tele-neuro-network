@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, RotateCcw, Zap } from "lucide-react";
+import { ArrowLeft, HelpCircle, RotateCcw, Zap } from "lucide-react";
 import Link from "next/link";
 import { PointerEvent, useEffect, useRef, useState } from "react";
 
@@ -8,6 +8,7 @@ type GameState = {
   running: boolean;
   score: number;
   stability: number;
+  feedback: string;
 };
 
 export default function EEGSignalStabilizer() {
@@ -19,7 +20,14 @@ export default function EEGSignalStabilizer() {
   const score = useRef(0);
   const stableFrames = useRef(0);
   const lastTime = useRef<number | null>(null);
-  const [game, setGame] = useState<GameState>({ running: false, score: 0, stability: 0 });
+  const feedbackIndex = useRef(0);
+  const [showGuide, setShowGuide] = useState(false);
+  const [game, setGame] = useState<GameState>({
+    running: false,
+    score: 0,
+    stability: 0,
+    feedback: "Press Play, then stabilize the trace.",
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -129,10 +137,33 @@ export default function EEGSignalStabilizer() {
 
       frame += 1;
       if (frame % 12 === 0) {
+        const stability = Math.min(100, Math.round((stableFrames.current / 90) * 100));
+        const stableFeedback = [
+          "Good control. Keep it smooth.",
+          "Nice stabilization.",
+          "Clean trace. Stay gentle.",
+          "Excellent clinical window control.",
+        ];
+        const warningFeedback = [
+          "Too much drift. Correct gently.",
+          "Refocus: bring the trace back.",
+          "Signal leaving the window.",
+          "Ease into the correction.",
+        ];
+        const idleFeedback = [
+          "Small inputs work best.",
+          "Hold briefly, then release.",
+          "Avoid overcorrection.",
+          "Find the rhythm of the trace.",
+        ];
+        const source = !game.running ? idleFeedback : stability > 70 ? stableFeedback : warningFeedback;
+        feedbackIndex.current = (feedbackIndex.current + 1) % source.length;
+
         setGame((current) => ({
           ...current,
           score: Math.round(score.current),
-          stability: Math.min(100, Math.round((stableFrames.current / 90) * 100)),
+          stability,
+          feedback: source[feedbackIndex.current],
         }));
       }
 
@@ -156,7 +187,7 @@ export default function EEGSignalStabilizer() {
     score.current = 0;
     stableFrames.current = 0;
     lastTime.current = null;
-    setGame({ running: true, score: 0, stability: 0 });
+    setGame({ running: true, score: 0, stability: 0, feedback: "Stabilize the trace inside the clinical window." });
   }
 
   function stop() {
@@ -205,7 +236,39 @@ export default function EEGSignalStabilizer() {
               <RotateCcw size={15} />
               Reset
             </button>
+            <button
+              type="button"
+              onClick={() => setShowGuide((value) => !value)}
+              className="inline-flex items-center gap-2 border border-white/15 px-5 py-3 text-[10px] uppercase tracking-[0.24em] text-[#D9E5E8]"
+            >
+              <HelpCircle size={15} />
+              How to play
+            </button>
           </div>
+
+          {showGuide && (
+            <div className="mt-6 max-w-xl border border-white/10 bg-white/[0.04] p-5 text-sm leading-7 text-[#C9D9DD]">
+              <p className="text-[10px] uppercase tracking-[0.24em] text-[#88B7A5]">
+                Guide
+              </p>
+              <p className="mt-3">
+                Your goal is to keep the EEG trace inside the highlighted clinical
+                window. The signal naturally drifts over time, and your input acts
+                like a stabilizing correction.
+              </p>
+              <p className="mt-3">
+                Press and hold on the trace to pull it back toward the center.
+                Release before you overcorrect. Short, controlled inputs usually
+                work better than holding continuously.
+              </p>
+              <p className="mt-3">
+                The trace turns green when it is readable and inside the window.
+                It turns pink when it leaves the target range. Score increases
+                while the signal remains stable; Stability shows how consistently
+                you are keeping control.
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="border border-white/10 bg-white/[0.035] p-4 shadow-2xl backdrop-blur md:p-6">
@@ -219,9 +282,13 @@ export default function EEGSignalStabilizer() {
               <p className="mt-2 font-serif text-4xl">{game.stability}%</p>
             </div>
             <div className="hidden border border-white/10 p-4 md:block">
-              <p className="text-[10px] uppercase tracking-[0.22em] text-[#A9BBC0]">Input</p>
-              <p className="mt-2 font-serif text-4xl">Hold</p>
+              <p className="text-[10px] uppercase tracking-[0.22em] text-[#A9BBC0]">Feedback</p>
+              <p className="mt-2 text-sm leading-6 text-[#D9E5E8]">{game.feedback}</p>
             </div>
+          </div>
+
+          <div className="mb-4 border border-white/10 bg-white/[0.03] p-3 text-sm leading-6 text-[#D9E5E8] md:hidden">
+            {game.feedback}
           </div>
 
           <canvas
