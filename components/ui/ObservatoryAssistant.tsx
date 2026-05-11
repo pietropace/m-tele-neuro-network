@@ -1,6 +1,7 @@
 "use client";
 
-import { Bot, Send, X } from "lucide-react";
+import { Send, X } from "lucide-react";
+import Image from "next/image";
 import { FormEvent, useState } from "react";
 
 type Message = {
@@ -64,14 +65,18 @@ export default function ObservatoryAssistant() {
         className="fixed bottom-5 left-5 z-[90] flex h-12 w-12 items-center justify-center border border-white/15 bg-white text-[#061215] shadow-lg"
         aria-label="Open observatory assistant"
       >
-        {open ? <X size={19} /> : <Bot size={19} />}
+        {open ? (
+          <X size={19} />
+        ) : (
+          <Image src="/favicon.ico" alt="" width={22} height={22} className="h-6 w-6" />
+        )}
       </button>
 
       {open && (
         <section className="fixed inset-x-4 bottom-24 z-[90] border border-white/15 bg-[#071417]/95 p-4 text-white shadow-2xl backdrop-blur md:left-5 md:right-auto md:w-[25rem]">
           <div className="border-b border-white/10 pb-3">
             <p className="text-[10px] uppercase tracking-[0.28em] text-[#88B7A5]">Data assistant</p>
-            <p className="mt-2 text-sm leading-6 text-[#C9D9DD]">RAG su dati.txt, area Observatory.</p>
+            <p className="mt-2 text-sm leading-6 text-[#C9D9DD]">Assistente dati della Network Observatory.</p>
           </div>
 
           <div className="mt-4 max-h-[18rem] space-y-3 overflow-y-auto pr-1">
@@ -92,8 +97,9 @@ export default function ObservatoryAssistant() {
               <button
                 key={starter}
                 type="button"
-                onClick={() => ask(starter)}
-                className="border border-white/10 px-2.5 py-1.5 text-[10px] uppercase tracking-[0.12em] text-[#A9BBC0]"
+                disabled={loading}
+                onClick={() => void ask(starter)}
+                className="border border-white/10 px-2.5 py-1.5 text-left text-[10px] uppercase tracking-[0.12em] text-[#A9BBC0] transition hover:border-[#88B7A5]/50 hover:text-white disabled:opacity-50"
               >
                 {starter}
               </button>
