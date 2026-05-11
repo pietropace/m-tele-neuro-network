@@ -21,6 +21,7 @@ const initialContactState: ContactState = {
 
 export default function FooterSection() {
   const [liked, setLiked] = useState(false);
+  const [likePending, setLikePending] = useState(false);
   const [likes, setLikes] = useState<number | null>(null);
   const [contactsCount, setContactsCount] = useState<number | null>(null);
   const [form, setForm] = useState<ContactState>(initialContactState);
@@ -63,12 +64,14 @@ export default function FooterSection() {
   }, []);
 
   async function handleLike() {
-    if (liked) {
+    if (likePending) {
       return;
     }
 
+    setLikePending(true);
     setLiked(true);
     window.localStorage.setItem("maugeri-footer-liked", "1");
+    setLikes((value) => (value ?? 0) + 1);
 
     try {
       const response = await fetch("/api/like", {
@@ -83,10 +86,15 @@ export default function FooterSection() {
         stats?: { likes?: number };
       };
 
-      setLikes(data.stats?.likes ?? 0);
+      if (typeof data.stats?.likes === "number") {
+        setLikes(data.stats.likes);
+      }
     } catch {
-      // Keep optimistic UI even if telemetry write fails.
-      setLikes((value) => (value ?? 0) + 1);
+      setLiked(false);
+      window.localStorage.removeItem("maugeri-footer-liked");
+      setLikes((value) => Math.max((value ?? 1) - 1, 0));
+    } finally {
+      setLikePending(false);
     }
   }
 
@@ -145,7 +153,7 @@ export default function FooterSection() {
                 animate={liked ? { scale: [1, 1.08, 1] } : { scale: 1 }}
                 transition={{ duration: 0.35 }}
                 aria-pressed={liked}
-                disabled={liked}
+                disabled={likePending}
                 className={`inline-flex min-h-11 items-center gap-3 border px-4 py-2 text-[11px] uppercase tracking-[0.2em] transition-colors ${
                   liked
                     ? "border-[#88B7A5] bg-[#88B7A5]/10 text-[#F5F7F8]"
