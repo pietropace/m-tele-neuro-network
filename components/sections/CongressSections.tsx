@@ -133,10 +133,11 @@ function Waveform({ path, delay }: { path: string; delay: number }) {
           pathLength: 0,
           opacity: 0,
         }}
-        animate={{
+        whileInView={{
           pathLength: 1,
           opacity: 1,
         }}
+        viewport={{ once: true, margin: "0px 0px -80px 0px" }}
         transition={{
           duration: 2.4,
           delay,
@@ -150,7 +151,7 @@ function Waveform({ path, delay }: { path: string; delay: number }) {
 export default function CongressSections() {
   return (
     <>
-      <section className="bg-[#F5F7F8] py-16 md:py-32 lg:py-44">
+      <section id="workflows" className="bg-[#F5F7F8] py-16 md:py-32 lg:py-44">
         <Container>
           <div className="grid gap-10 md:gap-16 lg:grid-cols-12 lg:gap-10">
             <FadeIn className="lg:col-span-5">

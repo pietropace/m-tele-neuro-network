@@ -4,6 +4,7 @@ import NetworkSection from "@/components/sections/NetworkSection";
 import TeamSection from "@/components/sections/TeamSection";
 import SanityEditorialSection from "@/components/sections/SanityEditorialSection";
 import FooterSection from "@/components/sections/FooterSection";
+import ScrollGuide from "@/components/ui/ScrollGuide";
 import { sanityFetch } from "@/sanity/lib/client";
 import { HOMEPAGE_CONTENT_QUERY } from "@/sanity/lib/queries";
 
@@ -31,13 +32,22 @@ export default async function HomePage() {
   }>({ query: HOMEPAGE_CONTENT_QUERY });
 
   return (
-    <main>
+    <main id="top">
+      <ScrollGuide />
       <Hero content={homepageContent} />
-      <NetworkSection />
-      <TeamSection />
-      <SanityEditorialSection content={homepageContent} />
+      <div id="network">
+        <NetworkSection />
+      </div>
+      <div id="team">
+        <TeamSection />
+      </div>
+      <div id="updates">
+        <SanityEditorialSection content={homepageContent} />
+      </div>
       <CongressSections />
-      <FooterSection />
+      <div id="contact">
+        <FooterSection />
+      </div>
     </main>
   );
 }

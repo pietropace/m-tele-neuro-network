@@ -32,7 +32,7 @@ export default function FadeIn({
       }}
       viewport={{
         once: true,
-        margin: "-80px",
+        margin: "0px 0px -40px 0px",
       }}
       transition={{
         duration: prefersReducedMotion ? 0 : 1.2,

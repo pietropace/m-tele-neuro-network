@@ -138,7 +138,7 @@ export default function ActivityExplorerSection() {
   const currentYearSiteValue = selectedYearRow[activeSite];
 
   return (
-    <section className="relative overflow-hidden bg-[#F5F7F8] py-16 md:py-32 lg:py-44">
+    <section id="activity" className="relative overflow-hidden bg-[#F5F7F8] py-16 md:py-32 lg:py-44">
       <Container>
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-10">
           <FadeIn className="lg:col-span-5">
