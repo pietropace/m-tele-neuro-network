@@ -5,9 +5,14 @@ import Link from "next/link";
 import { PointerEvent, useEffect, useRef, useState } from "react";
 
 type GameState = {
-  running: boolean;
+  phase: "idle" | "countdown" | "playing" | "finished";
   score: number;
   stability: number;
+  quality: number;
+  countdown: number;
+  timeLeft: number;
+  bestScore: number;
+  status: string;
   feedback: string;
 };
 
@@ -21,13 +26,26 @@ export default function EEGSignalStabilizer() {
   const stableFrames = useRef(0);
   const lastTime = useRef<number | null>(null);
   const feedbackIndex = useRef(0);
+  const phaseState = useRef<GameState["phase"]>("idle");
+  const countdown = useRef(0);
+  const timeLeft = useRef(45);
+  const nextArtifactAt = useRef(0);
+  const artifact = useRef<{ x: number; width: number; amp: number; until: number } | null>(null);
   const [showGuide, setShowGuide] = useState(false);
-  const [game, setGame] = useState<GameState>({
-    running: false,
+  const [game, setGame] = useState<GameState>(() => ({
+    phase: "idle",
     score: 0,
     stability: 0,
+    quality: 0,
+    countdown: 0,
+    timeLeft: 45,
+    bestScore:
+      typeof window === "undefined"
+        ? 0
+        : Number(window.localStorage.getItem("eeg-stabilizer-best") ?? 0),
+    status: "Idle",
     feedback: "Press Play, then stabilize the trace.",
-  });
+  }));
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -56,7 +74,21 @@ export default function EEGSignalStabilizer() {
       const dt = lastTime.current ? Math.min((timestamp - lastTime.current) / 1000, 0.04) : 0.016;
       lastTime.current = timestamp;
 
-      if (game.running) {
+      if (phaseState.current === "countdown") {
+        countdown.current = Math.max(0, countdown.current - dt);
+        if (countdown.current === 0) {
+          phaseState.current = "playing";
+          nextArtifactAt.current = timestamp + 1800;
+          setGame((current) => ({
+            ...current,
+            phase: "playing",
+            feedback: "Round started. Keep the signal readable.",
+          }));
+        }
+      }
+
+      if (phaseState.current === "playing") {
+        timeLeft.current = Math.max(0, timeLeft.current - dt);
         phase.current += dt * 96;
         const difficulty = 1 + Math.min(score.current / 120, 1.8);
         const naturalDrift =
@@ -68,6 +100,32 @@ export default function EEGSignalStabilizer() {
         velocity.current *= pointerActive.current ? 0.965 : 0.992;
         drift.current += velocity.current * dt;
         drift.current = Math.max(-height * 0.28, Math.min(height * 0.28, drift.current));
+
+        if (timestamp > nextArtifactAt.current) {
+          artifact.current = {
+            x: width * (0.18 + Math.random() * 0.64),
+            width: 16 + Math.random() * 20,
+            amp: (Math.random() > 0.5 ? 1 : -1) * (26 + Math.random() * 34),
+            until: timestamp + 1500,
+          };
+          nextArtifactAt.current = timestamp + 2800 + Math.random() * 2400;
+        }
+
+        if (timeLeft.current === 0) {
+          phaseState.current = "finished";
+          pointerActive.current = false;
+          const finalScore = Math.round(score.current);
+          const bestScore = Math.max(finalScore, Number(window.localStorage.getItem("eeg-stabilizer-best") ?? 0));
+          window.localStorage.setItem("eeg-stabilizer-best", String(bestScore));
+          setGame((current) => ({
+            ...current,
+            phase: "finished",
+            score: finalScore,
+            bestScore,
+            timeLeft: 0,
+            feedback: "Round complete. Review your signal quality.",
+          }));
+        }
       }
 
       ctx.clearRect(0, 0, width, height);
@@ -102,8 +160,16 @@ export default function EEGSignalStabilizer() {
         Math.sin((phase.current + width) * 0.052) * 22 +
         Math.sin((phase.current + width) * 0.137) * 11;
       const inBand = Math.abs(currentY - center) < band;
+      const quality = Math.max(0, Math.min(100, Math.round(100 - (Math.abs(currentY - center) / band) * 58)));
+      const status = artifact.current && timestamp < artifact.current.until
+        ? "Artifact risk"
+        : quality > 78
+          ? "Stable"
+          : quality > 48
+            ? "Readable"
+            : "Drifting";
 
-      if (game.running) {
+      if (phaseState.current === "playing") {
         if (inBand) {
           stableFrames.current += 1;
           score.current += dt * 10;
@@ -117,16 +183,36 @@ export default function EEGSignalStabilizer() {
       ctx.lineWidth = 2;
       ctx.beginPath();
       for (let x = 0; x <= width; x += 3) {
+        const artifactSignal =
+          artifact.current && timestamp < artifact.current.until
+            ? Math.exp(-((x - artifact.current.x) ** 2) / (2 * artifact.current.width ** 2)) * artifact.current.amp
+            : 0;
         const signal =
           center +
           drift.current +
           Math.sin((phase.current + x) * 0.052) * 22 +
           Math.sin((phase.current + x) * 0.137) * 11 +
-          (x % 97 < 6 ? Math.sin(timestamp * 0.01 + x) * 14 : 0);
+          (x % 97 < 6 ? Math.sin(timestamp * 0.01 + x) * 14 : 0) +
+          artifactSignal;
         if (x === 0) ctx.moveTo(x, signal);
         else ctx.lineTo(x, signal);
       }
       ctx.stroke();
+
+      if (artifact.current && timestamp < artifact.current.until) {
+        ctx.fillStyle = "rgba(232, 180, 180, 0.12)";
+        ctx.fillRect(artifact.current.x - artifact.current.width, 0, artifact.current.width * 2, height);
+        ctx.fillStyle = "#E8B4B4";
+        ctx.font = "10px Inter, sans-serif";
+        ctx.fillText("ARTIFACT", artifact.current.x - 28, 22);
+      }
+
+      const sweepX = ((timestamp * 0.055) % Math.max(width, 1));
+      const gradient = ctx.createLinearGradient(sweepX - 46, 0, sweepX, 0);
+      gradient.addColorStop(0, "rgba(136, 183, 165, 0)");
+      gradient.addColorStop(1, "rgba(136, 183, 165, 0.22)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(Math.max(0, sweepX - 46), 0, 46, height);
 
       if (pointerActive.current) {
         ctx.fillStyle = "rgba(136, 183, 165, 0.13)";
@@ -138,15 +224,25 @@ export default function EEGSignalStabilizer() {
       frame += 1;
       if (frame % 12 === 0) {
         const stability = Math.min(100, Math.round((stableFrames.current / 90) * 100));
+        const displayStatus =
+          phaseState.current === "countdown"
+            ? "Get ready"
+            : phaseState.current === "finished"
+              ? "Complete"
+              : status;
 
         setGame((current) => ({
           ...current,
           score: Math.round(score.current),
           stability,
+          quality,
+          countdown: Math.ceil(countdown.current),
+          timeLeft: Math.ceil(timeLeft.current),
+          status: displayStatus,
         }));
       }
 
-      if (game.running && frame % 150 === 0) {
+      if (phaseState.current === "playing" && frame % 150 === 0) {
         const stability = Math.min(100, Math.round((stableFrames.current / 90) * 100));
         const stableFeedback = [
           "Good control. Keep it smooth.",
@@ -179,7 +275,7 @@ export default function EEGSignalStabilizer() {
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(animationId);
     };
-  }, [game.running]);
+  }, []);
 
   function start() {
     drift.current = 0;
@@ -188,11 +284,26 @@ export default function EEGSignalStabilizer() {
     score.current = 0;
     stableFrames.current = 0;
     lastTime.current = null;
-    setGame({ running: true, score: 0, stability: 0, feedback: "Stabilize the trace inside the clinical window." });
+    countdown.current = 3;
+    timeLeft.current = 45;
+    phaseState.current = "countdown";
+    artifact.current = null;
+    setGame((current) => ({
+      ...current,
+      phase: "countdown",
+      score: 0,
+      stability: 0,
+      quality: 0,
+      countdown: 3,
+      timeLeft: 45,
+      status: "Get ready",
+      feedback: "Starting in 3 seconds.",
+    }));
   }
 
   function stop() {
-    setGame((current) => ({ ...current, running: false }));
+    phaseState.current = "idle";
+    setGame((current) => ({ ...current, phase: "idle", status: "Paused" }));
     pointerActive.current = false;
   }
 
@@ -223,11 +334,11 @@ export default function EEGSignalStabilizer() {
           <div className="mt-9 flex flex-wrap gap-3">
             <button
               type="button"
-              onClick={game.running ? stop : start}
+              onClick={game.phase === "playing" || game.phase === "countdown" ? stop : start}
               className="inline-flex items-center gap-2 bg-white px-5 py-3 text-[10px] uppercase tracking-[0.24em] text-[#061215]"
             >
               <Zap size={15} />
-              {game.running ? "Pause" : "Play"}
+              {game.phase === "playing" || game.phase === "countdown" ? "Pause" : "Play"}
             </button>
             <button
               type="button"
@@ -263,17 +374,19 @@ export default function EEGSignalStabilizer() {
                 work better than holding continuously.
               </p>
               <p className="mt-3">
+                Each round lasts 45 seconds and begins with a short countdown.
                 The trace turns green when it is readable and inside the window.
-                It turns pink when it leaves the target range. Score increases
-                while the signal remains stable; Stability shows how consistently
-                you are keeping control.
+                It turns pink when it leaves the target range. Random artifacts
+                may appear; do not chase every spike. Score increases while the
+                signal remains stable. Quality and Stability tell you how
+                consistently you are keeping clinical control.
               </p>
             </div>
           )}
         </div>
 
         <div className="border border-white/10 bg-white/[0.035] p-4 shadow-2xl backdrop-blur md:p-6">
-          <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-3">
+          <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
             <div className="border border-white/10 p-4">
               <p className="text-[10px] uppercase tracking-[0.22em] text-[#A9BBC0]">Score</p>
               <p className="mt-2 font-serif text-4xl">{game.score}</p>
@@ -282,11 +395,42 @@ export default function EEGSignalStabilizer() {
               <p className="text-[10px] uppercase tracking-[0.22em] text-[#A9BBC0]">Stability</p>
               <p className="mt-2 font-serif text-4xl">{game.stability}%</p>
             </div>
-            <div className="hidden border border-white/10 p-4 md:block">
+            <div className="border border-white/10 p-4">
+              <p className="text-[10px] uppercase tracking-[0.22em] text-[#A9BBC0]">Time</p>
+              <p className="mt-2 font-serif text-4xl">{game.timeLeft}</p>
+            </div>
+            <div className="border border-white/10 p-4">
+              <p className="text-[10px] uppercase tracking-[0.22em] text-[#A9BBC0]">Best</p>
+              <p className="mt-2 font-serif text-4xl">{game.bestScore}</p>
+            </div>
+            <div className="border border-white/10 p-4 md:col-span-2">
+              <p className="text-[10px] uppercase tracking-[0.22em] text-[#A9BBC0]">Signal quality</p>
+              <div className="mt-4 h-2 bg-white/10">
+                <div
+                  className="h-full bg-[#88B7A5] transition-[width]"
+                  style={{ width: `${game.quality}%` }}
+                />
+              </div>
+            </div>
+            <div className="hidden border border-white/10 p-4 md:col-span-2 md:block">
               <p className="text-[10px] uppercase tracking-[0.22em] text-[#A9BBC0]">Feedback</p>
-              <p className="mt-2 text-sm leading-6 text-[#D9E5E8]">{game.feedback}</p>
+              <p className="mt-2 text-sm leading-6 text-[#D9E5E8]">
+                {game.status} · {game.feedback}
+              </p>
             </div>
           </div>
+
+          {game.phase === "countdown" && (
+            <div className="mb-4 border border-[#88B7A5]/30 bg-[#88B7A5]/10 p-4 text-center font-serif text-5xl">
+              {game.countdown}
+            </div>
+          )}
+
+          {game.phase === "finished" && (
+            <div className="mb-4 border border-[#88B7A5]/30 bg-[#88B7A5]/10 p-4 text-sm leading-7 text-[#D9E5E8]">
+              Round complete. Final score: {game.score}. Best score: {game.bestScore}.
+            </div>
+          )}
 
           <div className="mb-4 border border-white/10 bg-white/[0.03] p-3 text-sm leading-6 text-[#D9E5E8] md:hidden">
             {game.feedback}
