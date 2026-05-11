@@ -2,7 +2,7 @@
 
 import { ArrowLeft, HelpCircle, RotateCcw, Zap } from "lucide-react";
 import Link from "next/link";
-import { PointerEvent, useEffect, useRef, useState } from "react";
+import { KeyboardEvent, PointerEvent, useEffect, useRef, useState } from "react";
 
 type GameState = {
   phase: "idle" | "countdown" | "playing" | "finished";
@@ -15,6 +15,41 @@ type GameState = {
   status: string;
   feedback: string;
 };
+
+function getRoundReport(game: GameState) {
+  const scoreWeight = Math.min(100, Math.round(game.score / 4.5));
+  const composite = Math.round(game.stability * 0.55 + game.quality * 0.35 + scoreWeight * 0.1);
+
+  if (composite >= 88) {
+    return {
+      grade: "A",
+      label: "Excellent control",
+      note: "The trace remained clinically readable with minimal drift and confident recovery.",
+    };
+  }
+
+  if (composite >= 72) {
+    return {
+      grade: "B",
+      label: "Good clinical window",
+      note: "The signal stayed mostly stable. A few smoother corrections would improve continuity.",
+    };
+  }
+
+  if (composite >= 55) {
+    return {
+      grade: "C",
+      label: "Readable with drift",
+      note: "The trace was intermittently readable, but recovery after drift needs earlier correction.",
+    };
+  }
+
+  return {
+    grade: "D",
+    label: "Unstable acquisition",
+    note: "The signal spent too much time outside the target window. Use shorter, gentler inputs.",
+  };
+}
 
 export default function EEGSignalStabilizer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -309,8 +344,16 @@ export default function EEGSignalStabilizer() {
 
   function handlePointer(event: PointerEvent<HTMLCanvasElement>, active: boolean) {
     event.currentTarget.setPointerCapture?.(event.pointerId);
-    pointerActive.current = active;
+    pointerActive.current = active && phaseState.current === "playing";
   }
+
+  function handleKeyboard(event: KeyboardEvent<HTMLCanvasElement>, active: boolean) {
+    if (event.key !== " " && event.key !== "Enter") return;
+    event.preventDefault();
+    pointerActive.current = active && phaseState.current === "playing";
+  }
+
+  const roundReport = getRoundReport(game);
 
   return (
     <main className="min-h-screen bg-[#061215] text-white">
@@ -374,6 +417,10 @@ export default function EEGSignalStabilizer() {
                 work better than holding continuously.
               </p>
               <p className="mt-3">
+                On desktop, you can also focus the signal panel and use Space or
+                Enter as the stabilizer control.
+              </p>
+              <p className="mt-3">
                 Each round lasts 45 seconds and begins with a short countdown.
                 The trace turns green when it is readable and inside the window.
                 It turns pink when it leaves the target range. Random artifacts
@@ -427,21 +474,38 @@ export default function EEGSignalStabilizer() {
           )}
 
           {game.phase === "finished" && (
-            <div className="mb-4 border border-[#88B7A5]/30 bg-[#88B7A5]/10 p-4 text-sm leading-7 text-[#D9E5E8]">
-              Round complete. Final score: {game.score}. Best score: {game.bestScore}.
+            <div className="mb-4 grid gap-3 border border-[#88B7A5]/30 bg-[#88B7A5]/10 p-4 text-sm leading-7 text-[#D9E5E8] md:grid-cols-[auto_1fr]">
+              <div className="flex size-20 items-center justify-center border border-white/15 font-serif text-5xl text-white">
+                {roundReport.grade}
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.24em] text-[#88B7A5]">
+                  {roundReport.label}
+                </p>
+                <p className="mt-2">
+                  {roundReport.note}
+                </p>
+                <p className="mt-2 text-[#A9BBC0]">
+                  Final score: {game.score}. Best score: {game.bestScore}.
+                </p>
+              </div>
             </div>
           )}
 
           <div className="mb-4 border border-white/10 bg-white/[0.03] p-3 text-sm leading-6 text-[#D9E5E8] md:hidden">
-            {game.feedback}
+            {game.status} · {game.feedback}
           </div>
 
           <canvas
             ref={canvasRef}
+            tabIndex={0}
             onPointerDown={(event) => handlePointer(event, true)}
             onPointerUp={(event) => handlePointer(event, false)}
             onPointerLeave={(event) => handlePointer(event, false)}
-            className="h-[24rem] w-full touch-none bg-[#061215] md:h-[34rem]"
+            onPointerCancel={(event) => handlePointer(event, false)}
+            onKeyDown={(event) => handleKeyboard(event, true)}
+            onKeyUp={(event) => handleKeyboard(event, false)}
+            className="h-[24rem] w-full touch-none bg-[#061215] outline-none ring-0 transition focus-visible:ring-2 focus-visible:ring-[#88B7A5]/70 md:h-[34rem]"
             aria-label="EEG signal stabilizer game canvas"
           />
         </div>
