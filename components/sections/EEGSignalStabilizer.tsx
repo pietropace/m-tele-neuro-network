@@ -4,8 +4,56 @@ import { ArrowLeft, HelpCircle, RotateCcw, Zap } from "lucide-react";
 import Link from "next/link";
 import { KeyboardEvent, PointerEvent, useEffect, useRef, useState } from "react";
 
+type Difficulty = "training" | "clinical" | "expert";
+
+const DIFFICULTIES: Record<
+  Difficulty,
+  {
+    label: string;
+    duration: number;
+    drift: number;
+    correction: number;
+    scoreRate: number;
+    artifactMin: number;
+    artifactMax: number;
+    artifactAmp: number;
+  }
+> = {
+  training: {
+    label: "Training",
+    duration: 60,
+    drift: 0.72,
+    correction: 155,
+    scoreRate: 8,
+    artifactMin: 5200,
+    artifactMax: 3600,
+    artifactAmp: 0.7,
+  },
+  clinical: {
+    label: "Clinical",
+    duration: 45,
+    drift: 1,
+    correction: 185,
+    scoreRate: 10,
+    artifactMin: 2800,
+    artifactMax: 2400,
+    artifactAmp: 1,
+  },
+  expert: {
+    label: "Expert",
+    duration: 35,
+    drift: 1.38,
+    correction: 205,
+    scoreRate: 13,
+    artifactMin: 1800,
+    artifactMax: 1600,
+    artifactAmp: 1.35,
+  },
+};
+
 type GameState = {
   phase: "idle" | "countdown" | "playing" | "finished";
+  difficulty: Difficulty;
   score: number;
   stability: number;
   quality: number;
@@ -15,6 +63,11 @@ type GameState = {
   status: string;
   feedback: string;
 };
+
+function getBestScore(difficulty: Difficulty) {
+  if (typeof window === "undefined") return 0;
+  return Number(window.localStorage.getItem(`eeg-stabilizer-best-${difficulty}`) ?? 0);
+}
 
 function getRoundReport(game: GameState) {
   const scoreWeight = Math.min(100, Math.round(game.score / 4.5));
@@ -62,22 +115,21 @@ export default function EEGSignalStabilizer() {
   const lastTime = useRef<number | null>(null);
   const feedbackIndex = useRef(0);
   const phaseState = useRef<GameState["phase"]>("idle");
+  const difficulty = useRef<Difficulty>("clinical");
   const countdown = useRef(0);
-  const timeLeft = useRef(45);
+  const timeLeft = useRef(DIFFICULTIES.clinical.duration);
   const nextArtifactAt = useRef(0);
   const artifact = useRef<{ x: number; width: number; amp: number; until: number } | null>(null);
   const [showGuide, setShowGuide] = useState(false);
   const [game, setGame] = useState<GameState>(() => ({
     phase: "idle",
+    difficulty: "clinical",
     score: 0,
     stability: 0,
     quality: 0,
     countdown: 0,
-    timeLeft: 45,
-    bestScore:
-      typeof window === "undefined"
-        ? 0
-        : Number(window.localStorage.getItem("eeg-stabilizer-best") ?? 0),
+    timeLeft: DIFFICULTIES.clinical.duration,
+    bestScore: getBestScore("clinical"),
     status: "Idle",
     feedback: "Press Play, then stabilize the trace.",
   }));
@@ -123,15 +175,16 @@ export default function EEGSignalStabilizer() {
       }
 
       if (phaseState.current === "playing") {
+        const config = DIFFICULTIES[difficulty.current];
         timeLeft.current = Math.max(0, timeLeft.current - dt);
         phase.current += dt * 96;
-        const difficulty = 1 + Math.min(score.current / 120, 1.8);
+        const driftScale = config.drift * (1 + Math.min(score.current / 120, 1.8));
         const naturalDrift =
           Math.sin(timestamp * 0.0009) * 42 +
           Math.sin(timestamp * 0.0021) * 22 +
           Math.sin(timestamp * 0.0043) * 10;
-        const correction = pointerActive.current ? -Math.sign(drift.current || 1) * 185 : 0;
-        velocity.current += (naturalDrift * difficulty + correction) * dt;
+        const correction = pointerActive.current ? -Math.sign(drift.current || 1) * config.correction : 0;
+        velocity.current += (naturalDrift * driftScale + correction) * dt;
         velocity.current *= pointerActive.current ? 0.965 : 0.992;
         drift.current += velocity.current * dt;
         drift.current = Math.max(-height * 0.28, Math.min(height * 0.28, drift.current));
@@ -140,18 +193,18 @@ export default function EEGSignalStabilizer() {
           artifact.current = {
             x: width * (0.18 + Math.random() * 0.64),
             width: 16 + Math.random() * 20,
-            amp: (Math.random() > 0.5 ? 1 : -1) * (26 + Math.random() * 34),
+            amp: (Math.random() > 0.5 ? 1 : -1) * (26 + Math.random() * 34) * config.artifactAmp,
             until: timestamp + 1500,
           };
-          nextArtifactAt.current = timestamp + 2800 + Math.random() * 2400;
+          nextArtifactAt.current = timestamp + config.artifactMin + Math.random() * config.artifactMax;
         }
 
         if (timeLeft.current === 0) {
           phaseState.current = "finished";
           pointerActive.current = false;
           const finalScore = Math.round(score.current);
-          const bestScore = Math.max(finalScore, Number(window.localStorage.getItem("eeg-stabilizer-best") ?? 0));
-          window.localStorage.setItem("eeg-stabilizer-best", String(bestScore));
+          const bestScore = Math.max(finalScore, getBestScore(difficulty.current));
+          window.localStorage.setItem(`eeg-stabilizer-best-${difficulty.current}`, String(bestScore));
           setGame((current) => ({
             ...current,
             phase: "finished",
@@ -207,7 +260,7 @@ export default function EEGSignalStabilizer() {
       if (phaseState.current === "playing") {
         if (inBand) {
           stableFrames.current += 1;
-          score.current += dt * 10;
+          score.current += dt * DIFFICULTIES[difficulty.current].scoreRate;
         } else {
           stableFrames.current = Math.max(0, stableFrames.current - 3);
           score.current = Math.max(0, score.current - dt * 3);
@@ -313,6 +366,7 @@ export default function EEGSignalStabilizer() {
   }, []);
 
   function start() {
+    const config = DIFFICULTIES[difficulty.current];
     drift.current = 0;
     velocity.current = 0;
     phase.current = 0;
@@ -320,17 +374,19 @@ export default function EEGSignalStabilizer() {
     stableFrames.current = 0;
     lastTime.current = null;
     countdown.current = 3;
-    timeLeft.current = 45;
+    timeLeft.current = config.duration;
     phaseState.current = "countdown";
     artifact.current = null;
     setGame((current) => ({
       ...current,
       phase: "countdown",
+      difficulty: difficulty.current,
       score: 0,
       stability: 0,
       quality: 0,
       countdown: 3,
-      timeLeft: 45,
+      timeLeft: config.duration,
+      bestScore: getBestScore(difficulty.current),
       status: "Get ready",
       feedback: "Starting in 3 seconds.",
     }));
@@ -340,6 +396,18 @@ export default function EEGSignalStabilizer() {
     phaseState.current = "idle";
     setGame((current) => ({ ...current, phase: "idle", status: "Paused" }));
     pointerActive.current = false;
+  }
+
+  function selectDifficulty(nextDifficulty: Difficulty) {
+    if (phaseState.current === "playing" || phaseState.current === "countdown") return;
+    difficulty.current = nextDifficulty;
+    setGame((current) => ({
+      ...current,
+      difficulty: nextDifficulty,
+      timeLeft: DIFFICULTIES[nextDifficulty].duration,
+      bestScore: getBestScore(nextDifficulty),
+      feedback: `${DIFFICULTIES[nextDifficulty].label} mode selected.`,
+    }));
   }
 
   function handlePointer(event: PointerEvent<HTMLCanvasElement>, active: boolean) {
@@ -401,6 +469,24 @@ export default function EEGSignalStabilizer() {
             </button>
           </div>
 
+          <div className="mt-4 flex flex-wrap gap-2">
+            {(Object.keys(DIFFICULTIES) as Difficulty[]).map((key) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => selectDifficulty(key)}
+                aria-pressed={game.difficulty === key}
+                className={`border px-4 py-2 text-[10px] uppercase tracking-[0.22em] transition ${
+                  game.difficulty === key
+                    ? "border-[#88B7A5] bg-[#88B7A5]/12 text-white"
+                    : "border-white/15 text-[#A9BBC0]"
+                }`}
+              >
+                {DIFFICULTIES[key].label}
+              </button>
+            ))}
+          </div>
+
           {showGuide && (
             <div className="mt-6 max-w-xl border border-white/10 bg-white/[0.04] p-5 text-sm leading-7 text-[#C9D9DD]">
               <p className="text-[10px] uppercase tracking-[0.24em] text-[#88B7A5]">
@@ -421,7 +507,9 @@ export default function EEGSignalStabilizer() {
                 Enter as the stabilizer control.
               </p>
               <p className="mt-3">
-                Each round lasts 45 seconds and begins with a short countdown.
+                Each round begins with a short countdown. Training is slower,
+                Clinical is balanced, and Expert adds faster drift with more
+                artifacts.
                 The trace turns green when it is readable and inside the window.
                 It turns pink when it leaves the target range. Random artifacts
                 may appear; do not chase every spike. Score increases while the
@@ -486,7 +574,7 @@ export default function EEGSignalStabilizer() {
                   {roundReport.note}
                 </p>
                 <p className="mt-2 text-[#A9BBC0]">
-                  Final score: {game.score}. Best score: {game.bestScore}.
+                  {DIFFICULTIES[game.difficulty].label} round. Final score: {game.score}. Best score: {game.bestScore}.
                 </p>
               </div>
             </div>
