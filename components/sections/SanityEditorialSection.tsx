@@ -1,3 +1,5 @@
+import Image from "next/image";
+import { urlFor } from "@/sanity/lib/image";
 import Container from "../ui/Container";
 
 type HomepageContent = {
@@ -8,6 +10,7 @@ type HomepageContent = {
     excerpt?: string;
     publishedAt?: string;
     authors?: { name?: string }[];
+    coverImage?: unknown;
   }[];
   featuredPosters?: {
     _id: string;
@@ -15,6 +18,7 @@ type HomepageContent = {
     abstract?: string;
     year?: number;
     authors?: { name?: string }[];
+    posterImage?: unknown;
   }[];
 };
 
@@ -59,6 +63,17 @@ export default function SanityEditorialSection({ content }: { content: HomepageC
 
             {articles.map((article) => (
               <article key={article._id} className="thin-border p-7">
+                {article.coverImage ? (
+                  <div className="relative mb-6 aspect-[16/9] overflow-hidden bg-[#D9E5E8]">
+                    <Image
+                      src={urlFor(article.coverImage)?.width(1200).height(675).fit("crop").url() ?? ""}
+                      alt={article.title ?? "Article cover image"}
+                      fill
+                      sizes="(min-width: 1024px) 52vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : null}
                 <p className="text-[10px] uppercase tracking-[0.28em] text-[#7A8E95]">
                   Article
                 </p>
@@ -71,6 +86,17 @@ export default function SanityEditorialSection({ content }: { content: HomepageC
 
             {posters.map((poster) => (
               <article key={poster._id} className="thin-border p-7">
+                {poster.posterImage ? (
+                  <div className="relative mb-6 aspect-[4/3] overflow-hidden bg-[#D9E5E8]">
+                    <Image
+                      src={urlFor(poster.posterImage)?.width(1000).height(750).fit("crop").url() ?? ""}
+                      alt={poster.title ?? "Scientific poster image"}
+                      fill
+                      sizes="(min-width: 1024px) 52vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : null}
                 <p className="text-[10px] uppercase tracking-[0.28em] text-[#7A8E95]">
                   Scientific poster {poster.year ? ` / ${poster.year}` : ""}
                 </p>

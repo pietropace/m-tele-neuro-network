@@ -16,13 +16,30 @@ const links = [
 export default function ScrollGuide() {
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [activeHref, setActiveHref] = useState("#top");
 
   useEffect(() => {
-    const update = () => setVisible(window.scrollY > 520);
+    const update = () => {
+      const scrollPosition = window.scrollY + 140;
+      const active =
+        [...links]
+          .reverse()
+          .find((link) => {
+            const element = document.querySelector(link.href);
+            return element && element.getBoundingClientRect().top + window.scrollY <= scrollPosition;
+          })?.href ?? "#top";
+
+      setActiveHref(active);
+      setVisible(window.scrollY > 520);
+      if (open && window.scrollY > 80) {
+        setOpen(false);
+      }
+    };
+
     update();
     window.addEventListener("scroll", update, { passive: true });
     return () => window.removeEventListener("scroll", update);
-  }, []);
+  }, [open]);
 
   return (
     <>
@@ -43,7 +60,10 @@ export default function ScrollGuide() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="bg-white px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-[#377082]"
+                aria-current={activeHref === link.href ? "page" : undefined}
+                className={`bg-white px-4 py-3 text-[10px] uppercase tracking-[0.24em] ${
+                  activeHref === link.href ? "text-[#1F2F35]" : "text-[#377082]"
+                }`}
               >
                 {link.label}
               </a>

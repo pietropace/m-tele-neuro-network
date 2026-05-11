@@ -20,7 +20,8 @@ export const HOMEPAGE_CONTENT_QUERY = defineQuery(`*[_type == "homepageContent"]
     title,
     abstract,
     year,
-    authors[]->{name}
+    authors[]->{name},
+    posterImage
   }
 }`);
 
