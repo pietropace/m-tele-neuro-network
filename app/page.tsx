@@ -5,6 +5,7 @@ import TeamSection from "@/components/sections/TeamSection";
 import SanityEditorialSection from "@/components/sections/SanityEditorialSection";
 import FooterSection from "@/components/sections/FooterSection";
 import ObservatoryPlaySection from "@/components/sections/ObservatoryPlaySection";
+import TrainingPortalSection from "@/components/sections/TrainingPortalSection";
 import ScrollGuide from "@/components/ui/ScrollGuide";
 import { sanityFetch } from "@/sanity/lib/client";
 import { HOMEPAGE_CONTENT_QUERY } from "@/sanity/lib/queries";
@@ -46,6 +47,7 @@ export default async function HomePage() {
         <SanityEditorialSection content={homepageContent} />
       </div>
       <CongressSections />
+      <TrainingPortalSection />
       <ObservatoryPlaySection />
       <div id="contact">
         <FooterSection />
