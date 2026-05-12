@@ -17,6 +17,10 @@ export type Difficulty = "training" | "clinical" | "expert";
 
 export type PlacementStatus = "idle" | "correct" | "wrong";
 
+export type TrainingMode = "study" | "test";
+
+export type PlacementHint = "Close" | "Too anterior" | "Too posterior" | "Too lateral" | "Too medial";
+
 export type Point = {
   x: number;
   y: number;
@@ -24,6 +28,7 @@ export type Point = {
 
 export type Placement = Point & {
   status: PlacementStatus;
+  hint: PlacementHint;
 };
 
 export const ELECTRODES: ElectrodeLabel[] = [

@@ -9,6 +9,7 @@ import {
   ElectrodeLabel,
   Placement,
   Point,
+  TrainingMode,
 } from "./constants";
 import ElectrodeChip from "./ElectrodeChip";
 import HeadMap from "./HeadMap";
@@ -43,6 +44,7 @@ function shuffleElectrodes() {
 export default function LeadPlacementSimulator() {
   const boardRef = useRef<HTMLDivElement | null>(null);
   const [difficulty, setDifficulty] = useState<Difficulty>("clinical");
+  const [mode, setMode] = useState<TrainingMode>("study");
   const [availableLeads, setAvailableLeads] = useState<ElectrodeLabel[]>(() => shuffleElectrodes());
   const [placements, setPlacements] = useState<Partial<Record<ElectrodeLabel, Placement>>>({});
   const [drag, setDrag] = useState<DragState | null>(null);
@@ -156,6 +158,24 @@ export default function LeadPlacementSimulator() {
                 Placement simulator
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
+                {(["study", "test"] as TrainingMode[]).map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => {
+                      setMode(key);
+                      setChecked(false);
+                    }}
+                    aria-pressed={mode === key}
+                    className={`border px-4 py-2 text-[10px] uppercase tracking-[0.22em] transition ${
+                      mode === key
+                        ? "border-[#17272C] bg-[#17272C] text-white"
+                        : "border-[#D7E4E6] bg-white text-[#52686E] hover:border-[#17272C]"
+                    }`}
+                  >
+                    {key}
+                  </button>
+                ))}
                 {(Object.keys(DIFFICULTIES) as Difficulty[]).map((key) => (
                   <button
                     key={key}
@@ -176,6 +196,9 @@ export default function LeadPlacementSimulator() {
                 ))}
               </div>
               <p className="mt-4 text-sm leading-7 text-[#52686E]">{DIFFICULTIES[difficulty].hint}</p>
+              <p className="mt-1 text-sm leading-7 text-[#52686E]">
+                {mode === "study" ? "Study mode shows target labels and placement zones." : "Test mode hides targets until validation."}
+              </p>
             </div>
 
             <div className="flex flex-wrap gap-3">
@@ -220,6 +243,7 @@ export default function LeadPlacementSimulator() {
                 boardRef={boardRef}
                 placements={placements}
                 tolerance={tolerance}
+                mode={mode}
                 onPlacedPointerDown={startDrag}
               />
             </div>
@@ -233,6 +257,14 @@ export default function LeadPlacementSimulator() {
                 <div className="h-full bg-[#88B7A5] transition-[width] duration-300" style={{ width: `${progress}%` }} />
               </div>
               <p className="mt-6 text-sm leading-7 text-[#52686E]">{resultMessage}</p>
+              <div className="mt-6 space-y-2">
+                {Object.entries(placements).slice(-4).map(([label, placement]) => (
+                  <div key={label} className="flex items-center justify-between border border-[#D7E4E6] bg-white px-3 py-2 text-xs text-[#52686E]">
+                    <span className="font-medium text-[#17272C]">{label}</span>
+                    <span>{placement.hint}</span>
+                  </div>
+                ))}
+              </div>
               <div className="mt-8 grid gap-3">
                 <div className="border border-[#D7E4E6] bg-white p-4">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-[#5E858C]">Tolerance</p>

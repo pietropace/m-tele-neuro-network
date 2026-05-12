@@ -1,15 +1,16 @@
 import type { PointerEvent, RefObject } from "react";
-import { CORRECT_POSITIONS, ElectrodeLabel, Placement } from "./constants";
+import { CORRECT_POSITIONS, ElectrodeLabel, Placement, TrainingMode } from "./constants";
 import ElectrodeChip from "./ElectrodeChip";
 
 type HeadMapProps = {
   boardRef: RefObject<HTMLDivElement | null>;
   placements: Partial<Record<ElectrodeLabel, Placement>>;
   tolerance: number;
+  mode: TrainingMode;
   onPlacedPointerDown: (label: ElectrodeLabel, event: PointerEvent<HTMLButtonElement>) => void;
 };
 
-export default function HeadMap({ boardRef, placements, tolerance, onPlacedPointerDown }: HeadMapProps) {
+export default function HeadMap({ boardRef, placements, tolerance, mode, onPlacedPointerDown }: HeadMapProps) {
   return (
     <div
       ref={boardRef}
@@ -44,18 +45,23 @@ export default function HeadMap({ boardRef, placements, tolerance, onPlacedPoint
           Nasion
         </text>
 
-        {Object.entries(CORRECT_POSITIONS).map(([label, point]) => (
-          <g key={label}>
-            <circle
-              cx={point.x}
-              cy={point.y}
-              r={tolerance}
-              fill="transparent"
-              stroke="transparent"
-              strokeWidth="0.35"
-            />
-          </g>
-        ))}
+        {mode === "study" &&
+          Object.entries(CORRECT_POSITIONS).map(([label, point]) => (
+            <g key={label}>
+              <circle
+                cx={point.x}
+                cy={point.y}
+                r={tolerance}
+                fill="rgba(255,255,255,0.72)"
+                stroke="rgba(47,102,114,0.18)"
+                strokeWidth="0.35"
+              />
+              <circle cx={point.x} cy={point.y} r="0.8" fill="#FFFFFF" />
+              <text x={point.x} y={point.y - tolerance - 1.2} textAnchor="middle" className="fill-[#5E858C] text-[2.8px]">
+                {label}
+              </text>
+            </g>
+          ))}
       </svg>
 
       {Object.entries(placements).map(([label, placement]) => {
