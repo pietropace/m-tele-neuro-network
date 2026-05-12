@@ -52,13 +52,15 @@ export default function LeadPlacementSimulator() {
   const tolerance = DIFFICULTIES[difficulty].tolerance;
   const placedCount = Object.keys(placements).length;
   const correctCount = countCorrect(placements, tolerance);
+  const missingLabels = ELECTRODES.filter((label) => !placements[label]);
   const progress = Math.round((placedCount / ELECTRODES.length) * 100);
 
   const resultMessage = useMemo(() => {
     if (!checked) return "Drag each lead onto the scalp map, then check placement.";
+    if (missingLabels.length > 0) return `${missingLabels.length} lead${missingLabels.length === 1 ? " is" : "s are"} still missing.`;
     if (correctCount === ELECTRODES.length) return "Perfect placement. All leads are within tolerance.";
     return `${ELECTRODES.length - correctCount} lead${ELECTRODES.length - correctCount === 1 ? "" : "s"} need adjustment.`;
-  }, [checked, correctCount]);
+  }, [checked, correctCount, missingLabels.length]);
 
   useEffect(() => {
     if (!drag) return;
@@ -108,7 +110,15 @@ export default function LeadPlacementSimulator() {
 
       for (const label of ELECTRODES) {
         const placement = existing[label];
-        if (!placement) continue;
+        if (!placement) {
+          next[label] = {
+            x: 6,
+            y: 6,
+            status: "missing",
+            hint: "Missing",
+          };
+          continue;
+        }
         next[label] = {
           ...placement,
           status: validatePlacement(label, placement, tolerance) ? "correct" : "wrong",
@@ -236,6 +246,15 @@ export default function LeadPlacementSimulator() {
                   />
                 ))}
               </div>
+              <div className="mt-6 border-t border-[#D7E4E6] pt-5">
+                <p className="text-[10px] uppercase tracking-[0.22em] text-[#5E858C]">10-20 legend</p>
+                <div className="mt-4 space-y-2 text-xs leading-6 text-[#52686E]">
+                  <p><span className="font-medium text-[#17272C]">Odd</span> = left hemisphere</p>
+                  <p><span className="font-medium text-[#17272C]">Even</span> = right hemisphere</p>
+                  <p><span className="font-medium text-[#17272C]">z</span> = midline</p>
+                  <p><span className="font-medium text-[#17272C]">F/C/P/O</span> = frontal, central, parietal, occipital</p>
+                </div>
+              </div>
             </aside>
 
             <div className="order-1 xl:order-2">
@@ -258,7 +277,7 @@ export default function LeadPlacementSimulator() {
               </div>
               <p className="mt-6 text-sm leading-7 text-[#52686E]">{resultMessage}</p>
               <div className="mt-6 space-y-2">
-                {Object.entries(placements).slice(-4).map(([label, placement]) => (
+                {Object.entries(placements).slice(-6).map(([label, placement]) => (
                   <div key={label} className="flex items-center justify-between border border-[#D7E4E6] bg-white px-3 py-2 text-xs text-[#52686E]">
                     <span className="font-medium text-[#17272C]">{label}</span>
                     <span>{placement.hint}</span>

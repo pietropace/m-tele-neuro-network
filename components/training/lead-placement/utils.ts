@@ -27,7 +27,7 @@ export function getPlacementHint(label: ElectrodeLabel, point: Point, tolerance:
 
 export function snapPlacement(label: ElectrodeLabel, point: Point, tolerance: number): Placement {
   const correctPoint = CORRECT_POSITIONS[label];
-  const isCorrect = validatePlacement(label, point, tolerance);
+  const isCorrect = distance(point, correctPoint) <= tolerance * 0.72;
   const nextPoint = isCorrect ? correctPoint : clampPoint(point);
 
   return {
