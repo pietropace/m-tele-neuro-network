@@ -246,15 +246,6 @@ export default function LeadPlacementSimulator() {
                   />
                 ))}
               </div>
-              <div className="mt-6 border-t border-[#D7E4E6] pt-5">
-                <p className="text-[10px] uppercase tracking-[0.22em] text-[#5E858C]">10-20 legend</p>
-                <div className="mt-4 space-y-2 text-xs leading-6 text-[#52686E]">
-                  <p><span className="font-medium text-[#17272C]">Odd</span> = left hemisphere</p>
-                  <p><span className="font-medium text-[#17272C]">Even</span> = right hemisphere</p>
-                  <p><span className="font-medium text-[#17272C]">z</span> = midline</p>
-                  <p><span className="font-medium text-[#17272C]">F/C/P/O</span> = frontal, central, parietal, occipital</p>
-                </div>
-              </div>
             </aside>
 
             <div className="order-1 xl:order-2">
