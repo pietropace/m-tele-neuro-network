@@ -29,9 +29,21 @@ function getPointFromClient(board: HTMLDivElement, clientX: number, clientY: num
   return { x, y };
 }
 
+function shuffleElectrodes() {
+  const shuffled = [...ELECTRODES];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+
+  return shuffled;
+}
+
 export default function LeadPlacementSimulator() {
   const boardRef = useRef<HTMLDivElement | null>(null);
   const [difficulty, setDifficulty] = useState<Difficulty>("clinical");
+  const [availableLeads, setAvailableLeads] = useState<ElectrodeLabel[]>(() => shuffleElectrodes());
   const [placements, setPlacements] = useState<Partial<Record<ElectrodeLabel, Placement>>>({});
   const [drag, setDrag] = useState<DragState | null>(null);
   const [checked, setChecked] = useState(false);
@@ -110,6 +122,7 @@ export default function LeadPlacementSimulator() {
     setPlacements({});
     setChecked(false);
     setDrag(null);
+    setAvailableLeads(shuffleElectrodes());
   }
 
   return (
@@ -190,7 +203,7 @@ export default function LeadPlacementSimulator() {
                 <p className="font-serif text-3xl text-[#2F6672]">{ELECTRODES.length - placedCount}</p>
               </div>
               <div className="mt-5 grid grid-cols-3 gap-3 xl:grid-cols-2">
-                {ELECTRODES.map((label) => (
+                {availableLeads.map((label) => (
                   <ElectrodeChip
                     key={label}
                     compact
