@@ -43,19 +43,19 @@ export const ELECTRODES: ElectrodeLabel[] = [
 ];
 
 export const CORRECT_POSITIONS: Record<ElectrodeLabel, Point> = {
-  Fp1: { x: 39, y: 22 },
-  Fp2: { x: 61, y: 22 },
-  F3: { x: 37, y: 36 },
-  F4: { x: 63, y: 36 },
-  C3: { x: 34, y: 52 },
-  C4: { x: 66, y: 52 },
-  P3: { x: 38, y: 68 },
-  P4: { x: 62, y: 68 },
-  O1: { x: 42, y: 84 },
-  O2: { x: 58, y: 84 },
+  Fp1: { x: 40, y: 19 },
+  Fp2: { x: 60, y: 19 },
+  F3: { x: 36.5, y: 35 },
+  F4: { x: 63.5, y: 35 },
+  C3: { x: 31.5, y: 52 },
+  C4: { x: 68.5, y: 52 },
+  P3: { x: 37, y: 69 },
+  P4: { x: 63, y: 69 },
+  O1: { x: 42.5, y: 85 },
+  O2: { x: 57.5, y: 85 },
   Fz: { x: 50, y: 34 },
   Cz: { x: 50, y: 52 },
-  Pz: { x: 50, y: 69 },
+  Pz: { x: 50, y: 70 },
 };
 
 export const DIFFICULTIES: Record<Difficulty, { label: string; tolerance: number; hint: string }> = {

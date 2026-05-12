@@ -23,14 +23,21 @@ export default function HeadMap({ boardRef, placements, tolerance, onPlacedPoint
           </radialGradient>
         </defs>
 
-        <path d="M50 5 L54 11 H46 Z" fill="#DCC6A6" stroke="#17272C" strokeWidth="0.35" />
-        <ellipse cx="50" cy="50" rx="34" ry="42" fill="url(#leadHead)" stroke="#17272C" strokeWidth="0.7" />
-        <path d="M16 45 C12 48 12 56 16 59" fill="none" stroke="#DCC6A6" strokeWidth="2" strokeLinecap="round" />
-        <path d="M84 45 C88 48 88 56 84 59" fill="none" stroke="#DCC6A6" strokeWidth="2" strokeLinecap="round" />
+        <path d="M50 4.5 L54.5 11.2 H45.5 Z" fill="#DCC6A6" stroke="#17272C" strokeWidth="0.35" />
+        <path
+          d="M50 9 C68 9, 82 25, 85 45 C88 65, 78 86, 62 93 C55 96, 45 96, 38 93 C22 86, 12 65, 15 45 C18 25, 32 9, 50 9 Z"
+          fill="url(#leadHead)"
+          stroke="#17272C"
+          strokeWidth="0.75"
+        />
+        <path d="M14.8 43 C9.8 46.5, 9.8 57.5, 14.8 61" fill="none" stroke="#DCC6A6" strokeWidth="2.1" strokeLinecap="round" />
+        <path d="M85.2 43 C90.2 46.5, 90.2 57.5, 85.2 61" fill="none" stroke="#DCC6A6" strokeWidth="2.1" strokeLinecap="round" />
         <path d="M50 11 V92" stroke="#D7E4E6" strokeDasharray="2 2" strokeWidth="0.45" />
-        <path d="M17 52 H83" stroke="#D7E4E6" strokeDasharray="2 2" strokeWidth="0.45" />
-        <circle cx="50" cy="92" r="1.3" fill="#E8B4B4" />
-        <text x="50" y="96" textAnchor="middle" className="fill-[#A46666] text-[3px] uppercase tracking-[0.2em]">
+        <path d="M15.5 52 H84.5" stroke="#D7E4E6" strokeDasharray="2 2" strokeWidth="0.45" />
+        <path d="M24 35 C34 28, 66 28, 76 35" fill="none" stroke="#D7E4E6" strokeWidth="0.35" opacity="0.8" />
+        <path d="M21 69 C34 77, 66 77, 79 69" fill="none" stroke="#D7E4E6" strokeWidth="0.35" opacity="0.8" />
+        <circle cx="50" cy="93" r="1.3" fill="#E8B4B4" />
+        <text x="50" y="97" textAnchor="middle" className="fill-[#A46666] text-[3px] uppercase tracking-[0.2em]">
           Inion
         </text>
         <text x="50" y="9" textAnchor="middle" className="fill-[#52686E] text-[3px] uppercase tracking-[0.2em]">
@@ -43,11 +50,10 @@ export default function HeadMap({ boardRef, placements, tolerance, onPlacedPoint
               cx={point.x}
               cy={point.y}
               r={tolerance}
-              fill="rgba(255,255,255,0.62)"
-              stroke="rgba(23,39,44,0.08)"
+              fill="transparent"
+              stroke="transparent"
               strokeWidth="0.35"
             />
-            <circle cx={point.x} cy={point.y} r="0.7" fill="#FFFFFF" opacity="0.9" />
           </g>
         ))}
       </svg>
