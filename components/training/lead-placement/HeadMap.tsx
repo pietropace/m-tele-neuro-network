@@ -43,11 +43,11 @@ export default function HeadMap({ boardRef, placements, tolerance, onPlacedPoint
               cx={point.x}
               cy={point.y}
               r={tolerance}
-              fill="rgba(136,183,165,0.045)"
-              stroke="rgba(136,183,165,0.16)"
+              fill="rgba(255,255,255,0.62)"
+              stroke="rgba(23,39,44,0.08)"
               strokeWidth="0.35"
             />
-            <circle cx={point.x} cy={point.y} r="1.1" fill="#88B7A5" opacity="0.65" />
+            <circle cx={point.x} cy={point.y} r="0.7" fill="#FFFFFF" opacity="0.9" />
           </g>
         ))}
       </svg>
