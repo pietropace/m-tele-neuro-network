@@ -1,5 +1,5 @@
 import Container from "@/components/ui/Container";
-import PdfContactFooter from "@/components/sections/PdfContactFooter";
+import FooterSection from "@/components/sections/FooterSection";
 import type { Metadata } from "next";
 
 const PDF_FILE_PATH = "/pdf/Tele-Neurophysiology-Poster.pdf";
@@ -28,7 +28,7 @@ export default function PdfPage() {
         </Container>
       </section>
 
-      <PdfContactFooter />
+      <FooterSection />
     </main>
   );
 }
