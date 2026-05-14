@@ -5,7 +5,6 @@ type SiteAccessMode = "public" | "private";
 
 const isAdminRoute = createRouteMatcher(["/admin(.*)", "/studio(.*)"]);
 const isLoginRoute = createRouteMatcher(["/login(.*)"]);
-const isAlwaysPublicRoute = createRouteMatcher(["/pdf(.*)"]);
 const isPublicApiRoute = createRouteMatcher([
   "/api/like",
   "/api/stats",
@@ -24,11 +23,13 @@ async function getSiteAccessMode(): Promise<SiteAccessMode> {
 
 export default clerkMiddleware(async (auth, req) => {
   const mode = await getSiteAccessMode();
+  const pathname = req.nextUrl.pathname;
+  const isPdfRoute = pathname === "/pdf" || pathname.startsWith("/pdf/");
   const shouldProtect =
     isAdminRoute(req) ||
     (mode === "private" &&
       !isLoginRoute(req) &&
-      !isAlwaysPublicRoute(req) &&
+      !isPdfRoute &&
       !isPublicApiRoute(req));
 
   if (shouldProtect) {
